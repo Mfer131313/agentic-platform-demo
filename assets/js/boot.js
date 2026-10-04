@@ -1,6 +1,6 @@
 /*
  * Arranque de la consola por industria.
- * Elige el paquete de datos (?ind=maquinaria|banca|retail|cerveceria, o la última industria abierta),
+ * Elige el paquete de datos (?ind=maquinaria|banca|retail|cerveceria|abogados, o la última industria abierta),
  * lo publica como window.CN_DATA para el núcleo y las escenas, aplica sus colores y rellena el marco.
  * Se carga después de los paquetes (assets/js/industries/*.js) y antes de core.js.
  */
@@ -14,7 +14,7 @@
   /* En inglés cada parte se sustituye entera por su versión inglesa (si existe); el resto queda en español. */
   const PACKS = {};
   Object.keys(PACKS_ES).forEach((k) => { PACKS[k] = EN ? Object.assign({}, PACKS_ES[k], PACKS_EN[k] || {}) : PACKS_ES[k]; });
-  const ORDER = ['maquinaria', 'banca', 'retail', 'cerveceria'].filter((id) => PACKS[id]);
+  const ORDER = ['maquinaria', 'banca', 'retail', 'cerveceria', 'abogados'].filter((id) => PACKS[id]);
   const LAST_KEY = 'agentic-ind-last';
 
   let qs = null;

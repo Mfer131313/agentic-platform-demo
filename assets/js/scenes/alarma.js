@@ -22,6 +22,41 @@
   const L = S.labels;
   const TX = A.text;
 
+  /* Modo Local/Prodigy: el modelo redacta el análisis de la propuesta para quien aprueba. La condición, el alcance
+     y la aprobación siguen siendo deterministas; si el modelo falla, la propuesta preparada se mantiene. */
+  const EN_UI = !!(window.CN_I18N && window.CN_I18N.english);
+  const LTA = (es, en) => (EN_UI ? en : es);
+  const plainA = (v) => String(v == null ? '' : v).replace(/<[^>]+>/g, ' ').replace(/[ \t]+/g, ' ').trim();
+  let AI_PENDING = null;
+  const useModel = () => !!(App.llm && App.llm.isLocal());
+  async function askAnalysis(run, signal) {
+    const H = ctxH(run);
+    const AP = A.approval;
+    const C = run.cond;
+    const org = (D.meta && (D.meta.report_org || D.meta.company)) || '';
+    const system = EN_UI
+      ? `You are the agent that prepares alarm proposals in Agentic Platform for ${org}. With the facts given, write the analysis for the person who must approve: what happened, why it matters, what the agents propose and what happens if it is not approved. Use ONLY the facts given; do not invent figures, deadlines or names. A person makes the decision: do not say anything has already been applied. At most 5 sentences, in English, without a title.`
+      : `Eres el agente que prepara las propuestas de alarma en Agentic Platform para ${org}. Con los datos que te doy, escribe el análisis para la persona que debe aprobar: qué ha pasado, por qué importa, qué proponen los agentes y qué ocurre si no se aprueba. Usa SOLO los datos facilitados; no inventes cifras, plazos ni nombres. La decisión la toma una persona: no digas que ya se ha aplicado nada. Máximo 5 frases, en español, sin título.`;
+    const effects = (AP.effects(H) || []).map((e) => plainA(e && e.text != null ? e.text : e)).filter(Boolean);
+    const facts = [
+      `${LTA('Alarma', 'Alarm')}: ${A.alarm_id} · ${plainA(A.asset)} · ${A.alarm_time}`,
+      `${LTA('Medida', 'Measure')}: ${plainA(M.short || M.col || '')} · ${LTA('umbral', 'threshold')} ${C.threshold} ${M.unit || ''} · ${C.above} min ${LTA('por encima', 'above')} (${C.start || '-'}–${C.end || LTA('en curso', 'ongoing')}) · ${LTA('crítico', 'critical')} ${critOf(C)} ${M.unit || ''}`,
+      `Workflow: ${run.wf.name} ${run.wf.version || ''} · ${LTA('aprueba', 'approver')}: ${run.wf.approver}`,
+      `${LTA('Alcance', 'Scope')}: ${plainA(TX.scope_short(H))}`,
+      `${LTA('Propuesta', 'Proposal')}: ${plainA(AP.title(H))}. ${plainA(AP.summary(H))}`,
+      effects.length ? `${LTA('Efectos si se aprueba', 'Effects if approved')}: ${effects.join('; ')}` : ''
+    ].filter(Boolean);
+    const r = await App.llm.chat({ system, user: facts.join('\n'), maxTokens: 500, temperature: 0.2, signal });
+    return { text: plainA(r.text), model: r.model, ms: r.ms };
+  }
+  function analysisBlock(run) {
+    const via = App.llm && App.llm.via ? App.llm.via() : { es: 'modelo', en: 'model' };
+    if (run.llm && run.llm.error) return html`<div class="muted mt-4">${icon('alert-triangle', 15)} ${LTA(`El modelo no ha redactado el análisis (${run.llm.error}); se muestra la propuesta preparada.`, `The model did not write the analysis (${run.llm.error}); showing the prepared proposal.`)}</div>`;
+    if (run.llm) return html`<div class="mt-4"><div class="strong">${icon('cpu', 15)} ${LTA('Análisis del agente', 'Agent analysis')} · ${run.llm.model} (${LTA(via.es, via.en)})</div><p class="mt-1" style="white-space:pre-line">${run.llm.text}</p></div>`;
+    if (AI_PENDING === run.id) return html`<div class="al-wait mt-4"><span class="spinner"></span><span>${LTA('El modelo está redactando el análisis para quien aprueba…', 'The model is writing the analysis for the approver…')}</span></div>`;
+    return '';
+  }
+
   /* Hoja de estilos propia (enlazada en consola.html; si faltara, se añade aquí). */
   try {
     if (!document.querySelector('link[href$="scene-alarma.css"]')) {
@@ -619,7 +654,7 @@
       policy: AP.policy,
       scope,
       effects,
-      extra: applying ? html`<div class="al-wait mt-4"><span class="spinner"></span><span>Aplicando en ${A.apply_systems}…</span></div>` : '',
+      extra: html`${analysisBlock(run)}${applying ? html`<div class="al-wait mt-4"><span class="spinner"></span><span>Aplicando en ${A.apply_systems}…</span></div>` : ''}`,
       editable: ITEMS.length > 1,
       approveLabel: AP.approve_label,
       rejectLabel: 'Rechazar',
@@ -811,6 +846,20 @@
       : 'Mirar la condición: con estos parámetros el workflow no se activa.' });
     const steps = cond.met ? p1Steps(run) : noTrigSteps(run);
     paint(ctx, run, steps, 0, 0);
+    const analysis = cond.met && useModel() ? askAnalysis(run, ctx.signal).catch((e) => ({ error: e.message })) : null;
+    if (analysis) {
+      AI_PENDING = run.id;
+      analysis.then((got) => {
+        if (AI_PENDING === run.id) AI_PENDING = null;
+        if (!ctx.alive()) return;
+        const cur = ctx.local.run;
+        if (!cur || cur.id !== run.id) return;
+        ctx.setLocal({ run: Object.assign({}, cur, { llm: got }) });
+        if (got.error) App.toast(LTA(`El modelo no ha redactado el análisis (${got.error}).`, `The model did not write the analysis (${got.error}).`), { tone: 'warn', icon: 'alert-triangle', duration: 7000 });
+        else App.audit(LTA('Análisis redactado por el modelo', 'Analysis written by the model'), `${A.alarm_id} · ${got.model} · ${fmt.ms(got.ms)}`, ACTOR_ORCH);
+        if (!ctx.vars.live) ctx.rerender();
+      });
+    }
     const stream = App.reasoningStream(ctx.$('#al-log'), steps, {
       title: `Registro · ${run.id}`, signal: ctx.signal, maxHeight: 400, start: iso(run.t0),
       minDelay: 0, maxDelay: 9000, speed: ctx.vars.fast ? 4 : 1,

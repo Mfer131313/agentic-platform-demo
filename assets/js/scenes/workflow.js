@@ -958,7 +958,7 @@
     if (st.phase === 'draft' || st.phase === 'published') {
       const n = st.m.steps.length;
       sub = `${fmt.plural(n, 'paso', 'pasos')} · ${st.m.approval ? '1 aprobación' : 'sin aprobación'} · cada uno con su frase del texto`;
-      body = html`${mapList(st.m)}<div class="card-body"><details class="run-log"><summary>${icon('chevron-right', 16)}<span>Registro de interpretación · ${streamSteps(st.m, st.vs).length} pasos · ${fmt.ms(st.res.ms)}</span></summary><div class="mt-2 wf-stream" id="wf-log"></div></details></div>`;
+      body = html`${mapList(st.m)}${reviewBlock(st.res)}<div class="card-body"><details class="run-log"><summary>${icon('chevron-right', 16)}<span>Registro de interpretación · ${streamSteps(st.m, st.vs).length} pasos · ${fmt.ms(st.res.ms)}</span></summary><div class="mt-2 wf-stream" id="wf-log"></div></details></div>`;
     }
     return App.card({ id: 'wf-interp-card', title: 'Interpretación', sub, icon: 'cpu', flush: true, body: html`<div id="wf-interp">${body}</div>` });
   }
@@ -1166,6 +1166,37 @@
 
   /* ================================================================ Acciones */
 
+  /* Modo Local/Prodigy: el modelo revisa el workflow generado y lo explica en lenguaje natural. La estructura
+     (disparador, pasos, aprobación, parámetros) sigue saliendo de la interpretación determinista. */
+  let REVIEW_PENDING = null;
+  const useModel = () => !!(App.llm && App.llm.isLocal());
+  const LTW = (es, en) => (EN ? en : es);
+  const plainW = (v) => String(v == null ? '' : v).replace(/<[^>]+>/g, ' ').replace(/[ \t]+/g, ' ').trim();
+  async function askReview(text, m) {
+    const org = (D.meta && (D.meta.doc_org || D.meta.company)) || '';
+    const system = EN
+      ? `You are the ${AGENT} agent of Agentic Platform for ${org}. You receive a procedure written by a person and the workflow the platform generated from it (trigger, steps with their agent, human approval and parameters). In at most 5 short sentences, explain what the workflow will do and when, and point out any step, threshold or approval in the text that the workflow does not reflect. Use ONLY the information given; do not invent systems, figures or roles. Answer in English, without a title.`
+      : `Eres el agente ${AGENT} de Agentic Platform para ${org}. Recibes un procedimiento escrito por una persona y el workflow que la plataforma ha generado a partir de él (disparador, pasos con su agente, aprobación humana y parámetros). En 5 frases cortas como máximo, explica qué hará el workflow y cuándo, y señala cualquier paso, umbral o aprobación del texto que el workflow no recoja. Usa SOLO la información facilitada; no inventes sistemas, cifras ni roles. Responde en español, sin título.`;
+    const wf = {
+      [LTW('nombre', 'name')]: m.name,
+      [LTW('disparador', 'trigger')]: m.trigger ? plainW(m.trigger.label || m.trigger.full || m.trigger.entry || '') : null,
+      [LTW('pasos', 'steps')]: m.steps.map((x, i) => `${i + 1}. ${plainW(x.name || x.agent || x.cap)}${x.what ? `: ${plainW(x.what)}` : ''}`),
+      [LTW('aprobación', 'approval')]: m.approval ? `${m.approval.role} (${m.approval.policy})` : LTW('ninguna', 'none'),
+      [LTW('parámetros', 'parameters')]: m.contractParams
+    };
+    const user = `${LTW('Procedimiento escrito', 'Written procedure')}:\n${text}\n\n${LTW('Workflow generado', 'Generated workflow')}:\n${JSON.stringify(wf, null, 2)}`;
+    const r = await App.llm.chat({ system, user, maxTokens: 500, temperature: 0.2 });
+    return { text: plainW(r.text), model: r.model, ms: r.ms };
+  }
+  function reviewBlock(res) {
+    if (!res) return '';
+    const via = App.llm && App.llm.via ? App.llm.via() : { es: 'modelo', en: 'model' };
+    if (res.review && res.review.error) return html`<div class="card-body"><p class="muted">${icon('alert-triangle', 15)} ${LTW(`El modelo no ha revisado el workflow (${res.review.error}).`, `The model did not review the workflow (${res.review.error}).`)}</p></div>`;
+    if (res.review) return html`<div class="card-body"><div class="strong">${icon('cpu', 15)} ${LTW('Revisión del agente', 'Agent review')} · ${res.review.model} (${LTW(via.es, via.en)})</div><p class="mt-1" style="white-space:pre-line">${res.review.text}</p></div>`;
+    if (REVIEW_PENDING && REVIEW_PENDING === res.createdAt) return html`<div class="card-body"><div class="al-wait"><span class="spinner"></span><span>${LTW('El modelo está revisando el workflow…', 'The model is reviewing the workflow…')}</span></div></div>`;
+    return '';
+  }
+
   function patchMap(ctx, key, tab, value) {
     const cur = Object.assign({}, ctx.local[key] || {});
     if (value === undefined) delete cur[tab]; else cur[tab] = value;
@@ -1198,13 +1229,28 @@
     if (card && window.innerWidth < 1024) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
     ctx.presenter({ next: `Mientras interpreta: «lee el texto, asigna cada paso a un agente y lo contrasta con ${TEMPLATES[tab].refs}». «Acelerar» si hace falta.` });
     const startedAt = App.nowISO();
+    const review = m && !vs.published && useModel() ? askReview(text, m).catch((e) => ({ error: e.message })) : null;
     const run = App.reasoningStream(ctx.$('#wf-stream'), m ? streamSteps(m, vs) : rejectSteps(I, text), { title: `${AGENT} · interpretación`, signal: ctx.signal, maxHeight: 420, start: startedAt });
     const res = await run.done;
     if (!ctx.alive()) return;
     ctx.vars.busy = false;
     patchMap(ctx, 'editing', tab, undefined);
     if (m) {
-      patchMap(ctx, 'results', tab, { kind: 'draft', text, createdAt: App.nowISO(), startedAt, ms: res.ms, params: {}, test: null });
+      const createdAt = App.nowISO();
+      patchMap(ctx, 'results', tab, { kind: 'draft', text, createdAt, startedAt, ms: res.ms, params: {}, test: null });
+      if (review) {
+        REVIEW_PENDING = createdAt;
+        review.then((got) => {
+          REVIEW_PENDING = null;
+          if (!ctx.alive()) return;
+          const cur = (ctx.local.results || {})[tab];
+          if (!cur || cur.createdAt !== createdAt) return;
+          patchMap(ctx, 'results', tab, Object.assign({}, cur, { review: got }));
+          if (got.error) App.toast(LTW(`El modelo no ha revisado el workflow (${got.error}).`, `The model did not review the workflow (${got.error}).`), { tone: 'warn', icon: 'alert-triangle', duration: 7000 });
+          else App.audit(LTW('Workflow revisado por el modelo', 'Workflow reviewed by the model'), `${m.slug} · ${got.model} · ${fmt.ms(got.ms)}`, AGENT_ACTOR);
+          ctx.rerender();
+        });
+      }
       if (vs.published) {
         App.audit('Workflow sin cambios', `${m.slug} · coincide con la v${vs.n} publicada`, AGENT_ACTOR);
         App.toast(`Sin cambios: coincide con la v${vs.n} publicada`, { tone: 'info' });

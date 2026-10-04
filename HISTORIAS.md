@@ -1,18 +1,18 @@
 # Historias por industria
 
-Las cuatro consolas repiten los casos de la demo de Congelados de Navarra,
+Las cinco consolas repiten los casos de la demo de Congelados de Navarra,
 trasladados a cada sector. Este documento fija los identificadores que comparten las escenas de una misma
 industria, para que el resumen del turno, la alarma, la reclamación, el simulacro y el cuestionario cuenten
 la misma historia. Todas las empresas, personas y cifras son ficticias. Fecha de la demo: martes 29/09/2026.
 
-| Escena de referencia | Maquinaria (Hidromec Ebro) | Banca (Banco Cierzo) | Retail (Mercados Moncayo) | Cervecera (Cervecera Bardenas) |
-|---|---|---|---|---|
-| Resumen del turno | Planta de Zaragoza: mecanizado, montaje, banco de pruebas, expedición | Centro de Operaciones: canales, autorización, fraude, SAC | Plataforma de Plaza y 64 tiendas | Fábrica de Arguedas: cocimiento, bodega, envasado, almacén |
-| Alarma con aprobación | Vibración del husillo del centro de mecanizado MC-04 | Pico de fraude en tarjetas del BIN 454812 | Mural de lácteos de la tienda T-027 por encima de 5 °C | Temperatura del fermentador FV-12 fuera de consigna |
-| Reclamación | Fuga de aceite en una prensa PH-250 de un cliente | Cliente que no reconoce tres cargos con tarjeta | Consumidor que encuentra un fragmento de vidrio en tomate frito de marca propia | Distribuidor de hostelería con barriles con sabor oxidado |
-| Simulacro de trazabilidad | Campaña de campo por el lote de juntas JNT-2607-031 | Punto común de compromiso CPP-2609-07 (TPV de una gasolinera) | Retirada del lote L26214 de tomate frito Moncayo | Retirada del lote de barril L2608-K14 |
-| Cuestionario de cliente | Auditoría de proveedor de un fabricante de vehículos industriales | Wolfsberg CBDDQ de un banco corresponsal | Preauditoría IFS Logistics de la plataforma | Homologación de un importador británico |
-| Procedimientos con citas | Mantenimiento, 8D, LOTO, campañas de campo | Fraude, SAC, reemisión, DORA, PBC/FT | APPCC de tienda, alertas, reclamaciones | APPCC, fermentación, retirada, vidrio, CIP |
+| Escena de referencia | Maquinaria (Hidromec Ebro) | Banca (Banco Cierzo) | Retail (Mercados Moncayo) | Cervecera (Cervecera Bardenas) | Despacho (Mora & Jordano) |
+|---|---|---|---|---|---|
+| Resumen del turno | Planta de Zaragoza: mecanizado, montaje, banco de pruebas, expedición | Centro de Operaciones: canales, autorización, fraude, SAC | Plataforma de Plaza y 64 tiendas | Fábrica de Arguedas: cocimiento, bodega, envasado, almacén | Sede de Málaga: Secretaría, Procesal, Fiscal y Tributario, Mercantil, Civil y Cumplimiento, Sede Córdoba |
+| Alarma con aprobación | Vibración del husillo del centro de mecanizado MC-04 | Pico de fraude en tarjetas del BIN 454812 | Mural de lácteos de la tienda T-027 por encima de 5 °C | Temperatura del fermentador FV-12 fuera de consigna | Notificación LexNET de la demanda PO 1184/2026 sin asignar, con posible conflicto de intereses |
+| Reclamación | Fuga de aceite en una prensa PH-250 de un cliente | Cliente que no reconoce tres cargos con tarjeta | Consumidor que encuentra un fragmento de vidrio en tomate frito de marca propia | Distribuidor de hostelería con barriles con sabor oxidado | Cliente que impugna la minuta F-2026-0938 por horas de una ampliación sin adenda |
+| Simulacro de trazabilidad | Campaña de campo por el lote de juntas JNT-2607-031 | Punto común de compromiso CPP-2609-07 (TPV de una gasolinera) | Retirada del lote L26214 de tomate frito Moncayo | Retirada del lote de barril L2608-K14 | Brecha RGPD-2609-03: informe de due diligence enviado a un destinatario equivocado |
+| Cuestionario de cliente | Auditoría de proveedor de un fabricante de vehículos industriales | Wolfsberg CBDDQ de un banco corresponsal | Preauditoría IFS Logistics de la plataforma | Homologación de un importador británico | Homologación en el panel de abogados de Banca Mediterránea |
+| Procedimientos con citas | Mantenimiento, 8D, LOTO, campañas de campo | Fraude, SAC, reemisión, DORA, PBC/FT | APPCC de tienda, alertas, reclamaciones | APPCC, fermentación, retirada, vidrio, CIP | Plazos y LexNET, conflictos, PBC, honorarios, RGPD, calendario fiscal |
 
 ## Maquinaria industrial · Hidromec Ebro, S.L. (Planta de Zaragoza, PLAZA)
 
@@ -101,3 +101,27 @@ LIMS LabWare, WMS Mecalux, GMAO Maximo, Microsoft Teams, Outlook.
   sostenibilidad, etiquetado UK).
 - **Procedimientos**: APPCC-01 Plan APPCC, PR-FER-003 Control de fermentación, PR-CAL-006 Retirada de producto,
   PR-ENV-002 Gestión de vidrio y cuerpos extraños, PR-LIM-001 Limpieza CIP.
+
+## Despacho de abogados · Mora & Jordano Abogados (Sede de Málaga)
+
+Despacho con áreas Procesal, Fiscal y Tributario, Mercantil y Civil, sede en Málaga y oficina en Córdoba. Sistemas:
+LexNET, Sede electrónica de la AEAT, Gestor de expedientes, iManage, Aranzadi, Signaturit, Microsoft Teams, Outlook.
+
+- **Alarma (10:25, ALM-LEX-1025)**: la demanda de juicio ordinario **PO 1184/2026** contra el cliente **Aceites
+  Sierra Subbética, S.L.** (Primera Instancia nº 7 de Málaga, expediente **PRC-2026-0412**) entró en LexNET el
+  28/09 a las 17:52 y sigue sin asignar: 20 días hábiles para contestar, vence el **27/10/2026**. La letrada
+  asignada está de vacaciones hasta el 13/10 y la demandante, Almazara Hojiblanca del Genil, S.A., fue cliente en
+  2025 (conflicto de intereses, POL-CON-002). Agentes: notificaciones, conflictos y documentos, aceptación del
+  encargo (barrera de información), plazos, cliente. Aprueba: Socio director.
+- **Reclamación (REC-2026-0057)**: **Grupo Hostelero Costa del Sol** impugna la minuta **F-2026-0938** (18.400 €)
+  del asunto MER-2026-0219 por las horas de una ampliación del alcance que no recoge la hoja de encargo HE-2026-0219. Acuse en 48 h, respuesta en 15 días
+  (POL-HON-004); borrador de rectificativa R-2026-0041.
+- **Simulacro (RGPD-2609-03)**: el 28/09 a las 18:47 un correo con el informe de due diligence de Promociones
+  Guadalhorce, S.A. (MER-2026-0233; PDF cifrado y 2 anexos XLSX sin cifrar) llegó a un destinatario equivocado;
+  aviso a las 08:05 del 29/09 → 255 personas, 173 con riesgo alto → AEPD hasta el 02/10/2026 08:05 (RGPD art. 33),
+  comunicación a interesados (art. 34). Protocolo PRO-RGPD-005.
+- **Cuestionario (CUE-2026-051)**: **Banca Mediterránea, S.A.** (ficticia) homologa su panel de abogados
+  2027-2029, lotes de Litigación y Fiscal; vence el 15/10/2026.
+- **Procedimientos**: PRO-PLZ-001 Plazos procesales y LexNET, POL-CON-002 Conflictos y aceptación de encargos,
+  MAN-PBC-003 Manual de prevención del blanqueo, POL-HON-004 Honorarios y hoja de encargo, PRO-RGPD-005 Protección de
+  datos y brechas, CAL-TRI-006 Calendario tributario.

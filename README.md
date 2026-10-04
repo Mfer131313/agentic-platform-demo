@@ -1,6 +1,6 @@
 # Agentic Platform por industria
 
-Cuatro consolas de Agentic Platform con la misma estructura y los mismos casos ejecutados con agentes que la demo de
+Cinco consolas de Agentic Platform con la misma estructura y los mismos casos ejecutados con agentes que la demo de
 Congelados de Navarra:
 
 | Industria | Empresa ficticia | Consola |
@@ -9,6 +9,7 @@ Congelados de Navarra:
 | Banca y servicios financieros | Banco Cierzo | `consola.html?ind=banca` |
 | Gran consumo y retail | Mercados Moncayo | `consola.html?ind=retail` |
 | Cervecera y bebidas | Cervecera Bardenas | `consola.html?ind=cerveceria` |
+| Despacho de abogados | Mora & Jordano | `consola.html?ind=abogados` |
 
 Cada consola tiene las ocho escenas de la demo de referencia: resumen del turno, de palabras a workflow, alarma con
 aprobación humana, reclamación de cliente, simulacro de trazabilidad, cuestionario de cliente, procedimientos con
@@ -24,7 +25,7 @@ Es HTML, CSS y JavaScript sin compilación ni dependencias. Basta con servir la 
 
 ```bash
 python3 -m http.server 8080 --directory .
-# http://localhost:8080/            portada con las cuatro industrias
+# http://localhost:8080/            portada con las cinco industrias
 # http://localhost:8080/consola.html?ind=banca#alarma
 ```
 
@@ -72,5 +73,22 @@ capacidades, el modelo y el consumo de tokens los decide Prodigy.
 
 3. Abre `http://localhost:8080/consola.html`, pulsa **Prodigy** en el selector de modelo y entra con un usuario
    de Prodigy. El token se guarda solo en el navegador; si caduca, la consola vuelve a pedir la contraseña.
+
+Configuración mínima del `.env` de Prodigy (se crea con `cp .env.example .env`) para usar un LiteLLM local:
+
+```
+OPENAI_API_KEY=<clave de LiteLLM>
+OPENAI_BASE_URL=http://host.docker.internal:4000/v1
+LLM_PINNED_MODEL=gpt-5-nano
+```
+
+Problemas habituales al arrancar Prodigy:
+
+- `refers to undefined volume # Local path…`: hay variables vacías seguidas de un comentario. Se limpian con
+  `sed -i '' -E 's/^([A-Za-z_][A-Za-z0-9_]*=)[[:space:]]+#.*$/\1/' .env` (macOS).
+- `SUPERADMIN_PASSWORD is unset or still the default`: hay que poner una contraseña propia (y un `AUTH_SECRET_KEY`
+  aleatorio). Esa contraseña es la que se usa para entrar desde la consola.
+- `llm.pinned_model=... is not a catalog key`: `LLM_PINNED_MODEL` es el nombre del modelo en el catálogo de Prodigy
+  (y en LiteLLM), no el alias de la clave.
 
 Desde el enlace publicado en claude.ai el modo Prodigy no funciona: la página no puede llamar a otros servidores.

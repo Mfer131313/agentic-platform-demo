@@ -1,0 +1,102 @@
+name: Agentic Platform industry demo · Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agentic-industries-pages
+  cancel-in-progress: false
+
+env:
+  DEMO_PATH: .
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout demo source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Validate and prepare only the demo
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f "$DEMO_PATH/index.html"
+          test -f "$DEMO_PATH/consola.html"
+          test ! -e "$DEMO_PATH/assets/js/llm-local.js"
+          python3 - <<'PY'
+          import os
+          import re
+          import shutil
+          import subprocess
+          from pathlib import Path
+
+          demo = Path(os.environ['DEMO_PATH'])
+          output = Path('_site')
+          output.mkdir()
+          allowed = {'.js', '.css', '.svg', '.png', '.jpg', '.jpeg', '.webp', '.ico', '.woff', '.woff2', '.ttf'}
+          secrets = re.compile(r"""AIza[0-9A-Za-z_-]{30,}|(?:ghp_|github_pat_)[0-9A-Za-z_]{20,}|sk-(?:ant-|proj-)?[0-9A-Za-z_-]{20,}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|(?i:(?:apiKey|api_key|password|secret)["']?\s*[:=]\s*["'][^"'\r\n]{12,}["'])""")
+          for item in demo.rglob('*'):
+              if item.is_symlink():
+                  raise SystemExit(f'Symlinks are not allowed in the published demo: {item}')
+          for item in (demo / 'assets').rglob('*'):
+              if not item.is_file():
+                  continue
+              if item.suffix.lower() not in allowed or any(part.startswith('.') for part in item.relative_to(demo).parts):
+                  raise SystemExit(f'Unexpected public asset: {item}')
+              if secrets.search(item.read_text(errors='replace')):
+                  raise SystemExit(f'Credential pattern detected in {item}; nothing will be deployed')
+              if item.suffix == '.js':
+                  subprocess.run(['node', '--check', str(item)], check=True)
+          shutil.copytree(demo / 'assets', output / 'assets')
+          for name in ('index.html', 'consola.html', 'robots.txt', '.nojekyll'):
+              shutil.copy2(demo / name, output / name)
+          console = output / 'consola.html'
+          html = console.read_text()
+          html = re.sub(r'\s*<script src="assets/js/llm-local\.js"[^>]*></script>', '', html)
+          console.write_text(html)
+          PY
+          python3 "$DEMO_PATH/tools/bundle.py" _site/agentic-consola.html
+          python3 - <<'PY'
+          import json
+          import os
+          from datetime import datetime, timezone
+          from pathlib import Path
+          Path('_site/version.json').write_text(json.dumps({
+              'repository': os.environ['GITHUB_REPOSITORY'],
+              'branch': os.environ['GITHUB_REF_NAME'],
+              'commit': os.environ['GITHUB_SHA'],
+              'built_at': datetime.now(timezone.utc).isoformat()
+          }, indent=2) + '\n')
+          PY
+
+      - name: Upload demo website
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Read Pages configuration
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+      - name: Deploy demo
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5

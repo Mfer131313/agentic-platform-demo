@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Agentic Platform por industria</title>
-  <meta name="description" content="Seis consolas de Agentic Platform con la misma estructura y los mismos casos con agentes que la demo de Congelados de Navarra: maquinaria industrial, banca, retail, cervecera, despacho de abogados y empresa de congelados. Datos sintéticos preparados por MFM.">
+  <meta name="description" content="Siete consolas de Agentic Platform con la misma estructura y los mismos casos con agentes que la demo de Congelados de Navarra: maquinaria industrial, banca, retail, cervecera, despacho de abogados, empresa de congelados y concesionario de automóviles. Datos sintéticos preparados por MFM.">
   <meta name="theme-color" content="#344E45">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Crect width='26' height='26' rx='6' fill='%23344E45'/%3E%3Cpath d='M8.5 8.5 17.5 13 8.5 17.5' fill='none' stroke='%23EEF3F1' stroke-width='1.6'/%3E%3Ccircle cx='8.5' cy='8.5' r='2.6' fill='%23EEF3F1'/%3E%3Ccircle cx='17.5' cy='13' r='2.6' fill='%23EEF3F1'/%3E%3Ccircle cx='8.5' cy='17.5' r='2.6' fill='%23EEF3F1'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -62,12 +62,14 @@
   <script src="assets/js/industries/cerveceria/meta.js"></script>
   <script src="assets/js/industries/abogados/meta.js"></script>
   <script src="assets/js/industries/congelados/meta.js"></script>
+  <script src="assets/js/industries/autopista/meta.js"></script>
   <script src="assets/js/industries/maquinaria/en/meta.js"></script>
   <script src="assets/js/industries/banca/en/meta.js"></script>
   <script src="assets/js/industries/retail/en/meta.js"></script>
   <script src="assets/js/industries/cerveceria/en/meta.js"></script>
   <script src="assets/js/industries/abogados/en/meta.js"></script>
   <script src="assets/js/industries/congelados/en/meta.js"></script>
+  <script src="assets/js/industries/autopista/en/meta.js"></script>
 </head>
 <body>
   <header class="top">
@@ -80,7 +82,7 @@
   <main class="wrap">
     <section class="hero">
       <div class="kicker" data-t="kicker">Demostración por industria</div>
-      <h1 data-t="h1">La misma consola y los mismos casos con agentes, en seis sectores</h1>
+      <h1 data-t="h1">La misma consola y los mismos casos con agentes, en siete sectores</h1>
       <p class="lead" data-t="lead">Cada consola repite las ocho escenas de la demo de Congelados de Navarra con los sistemas, la normativa y los casos de su sector. Las empresas y los datos son ficticios, y todo se ejecuta en el navegador sin tocar sistemas reales.</p>
       <ul class="scenes" id="scenes" aria-label="Escenas de cada consola">
         <li>Resumen del turno</li><li>De palabras a workflow</li><li>Alarma con aprobación humana</li><li>Reclamación de cliente</li><li>Simulacro de trazabilidad</li><li>Cuestionario de cliente</li><li>Procedimientos con citas</li><li>Cómo encaja Agentic Platform</li>
@@ -128,6 +130,12 @@
           ['Reclamación', 'Piedra de 8 mm en Guisantes verdes 1kg, lote L26-231-FUS-GUI-01'],
           ['Simulacro', 'Campaña de retirada del lote de ejercicio L26-261-FUS-GUI-03'],
           ['Cuestionario', 'Auditoría de proveedor de Retailer UK (marca blanca)']
+        ],
+        autopista: [
+          ['Alarma', 'Stock crítico BMW X3 (1 unidad) y taller saturado por ausencia de técnico'],
+          ['Reclamación', 'Disputa de TAE en contrato de financiación (3.99% vs 4.25%) con cliente'],
+          ['Simulacro', 'Recall de VW Golf por fallo del sistema de frenado ABS (2.500 unidades en España)'],
+          ['Cuestionario', 'Encuesta de satisfacción: venta, alquiler, suscripción y taller']
         ]
       };
       var CASES_EN = {
@@ -166,6 +174,12 @@
           ['Complaint', '8 mm stone in Garden Peas 1kg, batch L26-231-FUS-GUI-01'],
           ['Drill', 'Recall campaign for drill batch L26-261-FUS-GUI-03'],
           ['Questionnaire', 'Supplier audit for Retailer UK (private label)']
+        ],
+        autopista: [
+          ['Alarm', 'Critical BMW X3 stock (1 unit) and workshop overloaded (technician absent)'],
+          ['Complaint', 'APR dispute in financing contract (3.99% vs 4.25%) with customer'],
+          ['Drill', 'VW Golf recall for ABS braking system failure (2,500 units in Spain)'],
+          ['Questionnaire', 'Satisfaction survey: sales, rental, subscriptions and workshop']
         ]
       };
       var T = {
@@ -190,7 +204,7 @@
         b.setAttribute('aria-pressed', String(b.getAttribute('data-lang') === LANG));
         b.addEventListener('click', function () { try { localStorage.setItem('agentic-ind-lang', b.getAttribute('data-lang')); } catch (e) { /* */ } location.search = '?lang=' + b.getAttribute('data-lang'); });
       });
-      var ORDER = ['maquinaria', 'banca', 'retail', 'cerveceria', 'abogados', 'congelados'];
+      var ORDER = ['maquinaria', 'banca', 'retail', 'cerveceria', 'abogados', 'congelados', 'autopista'];
       var P = window.AGENTIC_INDUSTRIES || {};
       var PE = window.AGENTIC_INDUSTRIES_EN || {};
       var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };

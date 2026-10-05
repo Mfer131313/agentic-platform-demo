@@ -14,7 +14,7 @@
   /* En inglés cada parte se sustituye entera por su versión inglesa (si existe); el resto queda en español. */
   const PACKS = {};
   Object.keys(PACKS_ES).forEach((k) => { PACKS[k] = EN ? Object.assign({}, PACKS_ES[k], PACKS_EN[k] || {}) : PACKS_ES[k]; });
-  const ORDER = ['maquinaria', 'banca', 'retail', 'cerveceria', 'abogados'].filter((id) => PACKS[id]);
+  const ORDER = ['maquinaria', 'banca', 'retail', 'cerveceria', 'abogados', 'congelados'].filter((id) => PACKS[id]);
   const LAST_KEY = 'agentic-ind-last';
 
   let qs = null;

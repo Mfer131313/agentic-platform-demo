@@ -1,27 +1,133 @@
-agenticPack('autopista', {
-  reclamacion: {
-    title: 'Centro de reclamaciones',
-    subtitle: 'Gestión de quejas y disputas cliente',
-    type: 'claims-management',
-    active_claims: [
-      { id: 'REC-2026-0451', date_opened: '2026-10-01', client: 'Empresa de Transportes Ibérica', vehicle: 'BMW X5 (VIN-2026-MAD-BMW-12)', line: 'Venta', priority: 'high', status: 'open', title: 'Defecto en tapicería: costuras rotas', detail: 'Cliente reporta costuras rotas en asiento conductor tras 500 km. Solicita sustitución de tapicería o devolución. Compra: 2026-09-28, bajo garantía.', assigned_to: 'Especialista Calidad BMW', action: 'Inspección taller, evaluación cobertura garantía' },
-      { id: 'REC-2026-0512', date_opened: '2026-10-03', client: 'José María López', vehicle: 'Seat Ibiza (VIN-2026-MAD-SEAT-03)', line: 'Venta', priority: 'critical', status: 'escalated', title: 'Disputa con condiciones de financiación', detail: 'Cliente alega que TAE acordada es 3.99% pero documento dice 4.25%. Solicita rectificación o cancelación sin penalidad. Banco Sabadell solicitó revisión de contrato.', assigned_to: 'Responsable Finanzas', action: 'Revisión documento original + comunicación Banco Sabadell' },
-      { id: 'REC-2026-0498', date_opened: '2026-09-29', client: 'Hotel Costa del Sol', vehicle: 'Audi A6 Rent-a-Car', line: 'Alquiler', priority: 'medium', status: 'pending_inspection', title: 'Daño en parachoques trasero', detail: 'Cliente devolvió vehículo con abolladura en parachoques trasero (2026-10-02). Reclamación por daño no presente en salida. Depósito en disputa.', assigned_to: 'Gestor Flota Alquiler', action: 'Foto comparativa entrada/salida, avalúo taller' },
-      { id: 'REC-2026-0487', date_opened: '2026-09-25', client: 'Consultora Tech, S.L.', vehicle: 'VW Multivan (Suscripción)', line: 'Suscripción', priority: 'medium', status: 'under_review', title: 'Mantenimiento programado no realizado', detail: 'Cliente reporta que revisión programada para 2026-09-20 fue omitida. Vehículo llegó a taller (2026-10-01) con falta de aceite. Solicita compensación por negligencia.', assigned_to: 'Responsable Suscripciones', action: 'Verificar calendario mantenimiento, revisar registros taller' },
-      { id: 'REC-2026-0502', date_opened: '2026-10-02', client: 'Directiva Seguros Hispana', vehicle: 'Skoda Superb Rent-a-Car', line: 'Alquiler', priority: 'high', status: 'awaiting_client', title: 'Cargo adicional por combustible no justificado', detail: 'Cliente rechaza cargo de €85 por combustible. Devolvió tanque lleno según contrato. Disputa: medidor muestras inconsistencias. Solicita devolución o prueba de consumo real.', assigned_to: 'Gestor Flota Alquiler', action: 'Revisar telemetría, histórico combustible del vehículo' }
-    ],
-    common_complaint_types: [
-      { type: 'vehicle_defect', frequency: 'high', examples: 'Defectos de tapicería, luces, sistemas electrónicos', resolution_time: '5-10 días', typical_outcome: 'Reparación garantía o sustitución' },
-      { type: 'financing_dispute', frequency: 'medium', examples: 'TAE incorrecta, términos no comunicados, cuota errónea', resolution_time: '10-15 días', typical_outcome: 'Rectificación contrato o devolución parcial' },
-      { type: 'rental_damage', frequency: 'high', examples: 'Abolladuras, rayones, daños no reportados en devolución', resolution_time: '7-14 días', typical_outcome: 'Avalúo + cargo de reparación o devolución depósito' },
-      { type: 'maintenance_failure', frequency: 'medium', examples: 'Servicios no realizados, retrasos en reparación, mantenimiento preventivo omitido', resolution_time: '5-10 días', typical_outcome: 'Compensación o servicio gratuito futuro' },
-      { type: 'fuel_dispute', frequency: 'medium', examples: 'Cargos adicionales sin justificación, inconsistencias en medición', resolution_time: '3-7 días', typical_outcome: 'Devolución de cargo o validación con telemetría' }
-    ],
-    resolution_channels: [
-      { channel: 'Negociación directa', success_rate: '65%', avg_time: '3-5 días' },
-      { channel: 'Inspección técnica taller', success_rate: '80%', avg_time: '5-10 días' },
-      { channel: 'Arbitraje Banco (financiación)', success_rate: '70%', avg_time: '15-30 días' },
-      { channel: 'Gestoría legal externa', success_rate: '85%', avg_time: '30-60 días' }
-    ]
-  }
-});
+/* Autopista Multimotor · reclamaciones de clientes. Ejemplo: disputa APR en financiación (MFM).
+ * Las funciones reciben el contexto H de la escena. */
+(function () {
+  'use strict';
+
+  /* Claims activos. */
+  const CLAIMS = [
+    {
+      id: 'CLM-2026-001',
+      date: '2026-10-01',
+      type: 'financing',
+      severity: 'critical',
+      customer: 'Roberto García',
+      vehicle: 'BMW X5 40d',
+      amount: 2400,
+      issue: 'APR discrepancy: Contrato dice 3.99%, factura menciona 4.25%. Reclamación de sobrecoste.',
+      status: 'escalated',
+      owner: 'Finanzas'
+    },
+    {
+      id: 'CLM-2026-002',
+      date: '2026-10-02',
+      type: 'defect',
+      severity: 'high',
+      customer: 'María Rodríguez',
+      vehicle: 'Audi Q3 (rental)',
+      amount: 1200,
+      issue: 'Defecto tapicería en asientos traseros. Alquiler 7 días, reclamación de reembolso.',
+      status: 'investigating',
+      owner: 'Taller'
+    },
+    {
+      id: 'CLM-2026-003',
+      date: '2026-10-03',
+      type: 'rental-damage',
+      severity: 'high',
+      customer: 'Carlos López',
+      vehicle: 'Volkswagen Golf (rental)',
+      amount: 800,
+      issue: 'Raya en puerta lateral durante alquiler. Cliente reclama no estar implicado. Análisis pericial pendiente.',
+      status: 'pending-inspection',
+      owner: 'Seguros'
+    },
+    {
+      id: 'CLM-2026-004',
+      date: '2026-09-28',
+      type: 'maintenance',
+      severity: 'medium',
+      customer: 'Ana Fernández',
+      vehicle: 'Subscription (BMW X3)',
+      amount: 350,
+      issue: 'Revisión programada omitida de contrato de suscripción. Cliente pagó revisión adicional. Reembolso solicitado.',
+      status: 'in-resolution',
+      owner: 'Atención cliente'
+    },
+    {
+      id: 'CLM-2026-005',
+      date: '2026-10-04',
+      type: 'fuel-surcharge',
+      severity: 'low',
+      customer: 'Pedro Jiménez',
+      vehicle: 'Rental (Skoda Octavia)',
+      amount: 45,
+      issue: 'Cargo de combustible: cliente reclama depósito lleno al retorno. Foto del ticket contradice.',
+      status: 'closed-rejected',
+      owner: 'Alquiler'
+    }
+  ];
+
+  /* Complaint types statistics. */
+  const COMPLAINT_TYPES = [
+    { type: 'APR/Financing disputes', frequency: 'Medium', avg_resolution_days: 15, success_rate: 65, example: 'CLM-2026-001' },
+    { type: 'Defects (tapicería, electronics)', frequency: 'High', avg_resolution_days: 8, success_rate: 80, example: 'CLM-2026-002' },
+    { type: 'Rental damage (scratches, impacts)', frequency: 'High', avg_resolution_days: 12, success_rate: 70, example: 'CLM-2026-003' },
+    { type: 'Missed maintenance', frequency: 'Medium', avg_resolution_days: 5, success_rate: 85, example: 'CLM-2026-004' },
+    { type: 'Fuel & surcharges', frequency: 'Low', avg_resolution_days: 3, success_rate: 40, example: 'CLM-2026-005' }
+  ];
+
+  /* Resolution channels. */
+  const RESOLUTION_CHANNELS = [
+    { channel: 'Direct negotiation (customer care)', success_rate: 65, avg_days: 5, escalation: 'Finance review if > 1000 EUR' },
+    { channel: 'Workshop inspection (defect verification)', success_rate: 80, avg_days: 8, escalation: 'Warranty claim if defect confirmed' },
+    { channel: 'Bank arbitration (financing disputes)', success_rate: 70, avg_days: 20, escalation: 'Legal if bank declines' },
+    { channel: 'Insurance claim (rental damage)', success_rate: 75, avg_days: 15, escalation: 'Third-party inspection' },
+    { channel: 'Legal firm (last resort)', success_rate: 85, avg_days: 45, escalation: 'Litigation' }
+  ];
+
+  /* Funciones para contexto H. */
+  const activeClaims = (sc) => CLAIMS.filter((c) => c.status !== 'closed-rejected').length;
+  const criticalClaims = (sc) => CLAIMS.filter((c) => c.severity === 'critical').length;
+  const totalAmount = (sc) => CLAIMS.reduce((sum, c) => sum + c.amount, 0);
+
+  agenticPack('autopista', {
+    reclamacion: {
+      nav: 'Reclamaciones',
+      title: 'Centro de resolución de reclamaciones',
+      icon: 'alert-triangle',
+      page_title: 'Autopista Multimotor · Reclamaciones activas',
+      summary: '5 reclamaciones activas. Crítica: disputa APR (€2.400). Media: defectos y daño alquiler. Canales: negociación directa, inspección, arbitraje bancario, seguro, legal.',
+      status: 'operational',
+      active_count: activeClaims(),
+      critical_count: criticalClaims(),
+      total_amount: totalAmount(),
+      claims: CLAIMS,
+      complaint_types: COMPLAINT_TYPES,
+      resolution_channels: RESOLUTION_CHANNELS,
+      chart: {
+        title: 'Estado de reclamaciones y resolución',
+        sub: '2026-10-07 · Autopista Multimotor',
+        claims_by_status: [
+          { status: 'Escalada', count: 1, amount: 2400 },
+          { status: 'Investigando', count: 1, amount: 1200 },
+          { status: 'Inspección pendiente', count: 1, amount: 800 },
+          { status: 'Resolución', count: 1, amount: 350 },
+          { status: 'Cerrada (rechazada)', count: 1, amount: 45 }
+        ],
+        typical_resolution_times: [
+          { type: 'Combustible', days: 3 },
+          { type: 'Mantenimiento', days: 5 },
+          { type: 'Defectos', days: 8 },
+          { type: 'APR', days: 15 },
+          { type: 'Daño alquiler', days: 12 }
+        ]
+      },
+      event_kv: [
+        ['Crítica', 'CLM-2026-001: APR 3.99% vs 4.25% · €2.400 · escalada a Finanzas'],
+        ['Altas', 'Defectos (CLM-2026-002) · Daño rental (CLM-2026-003)'],
+        ['Canales', 'Negociación 65% (5d) | Taller 80% (8d) | Banco 70% (20d) | Legal 85% (45d)'],
+        ['Próximo paso', 'CLM-2026-001: arbitraje bancario; CLM-2026-003: pericia de seguros']
+      ]
+    }
+  });
+})();

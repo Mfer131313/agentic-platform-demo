@@ -11,6 +11,7 @@ agenticPackEn('congelados', {
     user_initials: 'OD',
     user_sub: 'Night shift',
     clock_title: 'Plant time (Fustiñana)',
+    theme: { brand: '#496C60', dark: '#344E45', deep: '#1F2E29', tint: '#EEF3F1' },
     data_nouns: 'Lots, pallets, cold rooms, production orders, customers and procedures',
     trace: { noun: 'lot', systems: 'SAP, MES Mapex and Mecalux Easy WMS', systems_short: 'SAP + Mapex + Easy WMS', example: 'L26-261-FUS-GUI-03', quality_tab: 'Quality' },
     doc_org: 'Frozen Foods Company · Quality',

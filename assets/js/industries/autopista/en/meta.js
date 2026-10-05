@@ -1,5 +1,5 @@
-agenticPack('autopista', {
-  meta_en: {
+agenticPackEn('autopista', {
+  meta: {
     id: 'autopista',
     industry: 'Automotive Distribution and Services',
     company: 'Autopista Multimotor',
@@ -20,7 +20,7 @@ agenticPack('autopista', {
     doc_org: 'Autopista Multimotor · Quality',
     report_org: 'Autopista Multimotor · Operations'
   },
-  roles_en: {
+  roles: {
     decider: 'Operations Manager',
     sales_shift: 'Sales Shift Supervisor',
     rental_shift: 'Rental Fleet Manager',

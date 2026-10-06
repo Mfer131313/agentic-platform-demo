@@ -1049,7 +1049,7 @@
     return html`<article class="email">
       ${subject ? html`<div class="email-subject">${o.highlightSubject ? highlightText(subject, o.highlights) : subject}</div>` : ''}
       ${pairs.length ? html`<dl class="email-head">${pairs.map(([k, v]) => html`<dt>${k}</dt><dd>${v}</dd>`)}</dl>` : ''}
-      <div class="email-body">${highlightText(o.text != null ? o.text : (o.body || ''), o.highlights)}</div>
+      <div class="email-body" data-no-translate>${highlightText(o.text != null ? o.text : (o.body || ''), o.highlights)}</div>
       ${o.attachments && o.attachments.length ? html`<div class="email-attach">${o.attachments.map((a) => html`<span class="sys">${icon('file-text', 12)}${a}</span>`)}</div>` : ''}
     </article>`;
   }

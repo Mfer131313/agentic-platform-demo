@@ -185,7 +185,7 @@
       var T = {
         es: { scenes: ['Resumen del turno', 'De palabras a workflow', 'Alarma con aprobación humana', 'Reclamación de cliente', 'Simulacro de trazabilidad', 'Cuestionario de cliente', 'Procedimientos con citas', 'Cómo encaja Agentic Platform'], conn: 'Conectores', open: 'Abrir la consola de ' },
         en: { scenes: ['Shift summary', 'From words to workflow', 'Alarm with human approval', 'Customer complaint', 'Traceability drill', 'Customer questionnaire', 'Procedures with citations', 'How Agentic Platform fits'], conn: 'Connectors', open: 'Open the console for ',
-          sub: 'MFM agent platform', kicker: 'Demo by industry', h1: 'The same console and the same agent use cases, in six sectors',
+          sub: 'MFM agent platform', kicker: 'Demo by industry', h1: 'The same console and the same agent use cases, in seven sectors',
           lead: 'Each console repeats the eight scenes of the Congelados de Navarra demo with the systems, regulations and cases of its sector. Companies and data are fictitious, and everything runs in the browser without touching real systems.',
           ref: 'Reference demo: Congelados de Navarra, frozen food.', refa: 'Open the original demo ↗',
           foot: 'Synthetic demo data prepared by MFM. Actions (holds, notices, publications) are simulated and stay in this browser only.' }
@@ -209,7 +209,7 @@
       var PE = window.AGENTIC_INDUSTRIES_EN || {};
       var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
       document.getElementById('grid').innerHTML = ORDER.filter(function (k) { return P[k] && P[k].meta; }).map(function (k) {
-        var m = EN && PE[k] && PE[k].meta ? PE[k].meta : P[k].meta;
+        var m = EN && PE[k] && PE[k].meta ? Object.assign({}, P[k].meta, PE[k].meta) : P[k].meta;
         var t = m.theme;
         return '<article class="ind" style="--c-brand:' + t.brand + ';--c-dark:' + t.dark + ';--c-tint:' + t.tint + '">'
           + '<div class="ind-head"><span class="ind-av">' + esc(m.short) + '</span><div><div class="ind-name">' + esc(m.industry) + '</div><div class="ind-co">' + esc(m.company) + ' · ' + esc(m.site) + '</div></div></div>'

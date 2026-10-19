@@ -1,6 +1,6 @@
 # Historias por industria
 
-Las cinco consolas repiten los casos de la demo de Congelados de Navarra,
+Las consolas repiten los casos de la demo de Congelados de Navarra,
 trasladados a cada sector. Este documento fija los identificadores que comparten las escenas de una misma
 industria, para que el resumen del turno, la alarma, la reclamación, el simulacro y el cuestionario cuenten
 la misma historia. Todas las empresas, personas y cifras son ficticias. Fecha de la demo: martes 29/09/2026.
@@ -125,3 +125,15 @@ LexNET, Sede electrónica de la AEAT, Gestor de expedientes, iManage, Aranzadi, 
 - **Procedimientos**: PRO-PLZ-001 Plazos procesales y LexNET, POL-CON-002 Conflictos y aceptación de encargos,
   MAN-PBC-003 Manual de prevención del blanqueo, POL-HON-004 Honorarios y hoja de encargo, PRO-RGPD-005 Protección de
   datos y brechas, CAL-TRI-006 Calendario tributario.
+
+## Instalación de alarmas · Guardián Ibérica Instalaciones, S.L.U. (Hub de Paterna, Valencia)
+
+Instalador y mantenedor multimarca con contratos de partner de Verisure, Sector Alarm y Prosegur Alarmas (marcas reales citadas solo
+como contexto; la empresa y todas las cifras son ficticias). Sistemas: Salesforce CRM, SAP Business One, portales de partner, Samsara,
+Twilio SMS, Google Workspace, Slack. Fecha de la demo: lunes 19/10/2026. El catálogo de 30 casos está en `CASOS_DE_USO_ALARMAS.md`.
+
+- **Alarma (05:50)**: **ALM-COM-0611**, caída de comunicación 4G de **214 paneles** en Valencia Norte (pico 241 a las 05:42), 38 sin vía de respaldo.
+- **Reclamación**: **Marta Soler Pons**, contrato Sector Alarm **SA-2026-77412**, dos cargos de vigilante por falsas alarmas; caso **CLM-2026-0619**.
+- **Simulacro**: lote **PIR-2607-A** del detector PIR-200 (Sentinela Electronics, batería de litio): 1.386 instalados en **912 hogares**; campaña **REC-2026-1019**.
+- **Cuestionario**: homologación anual de instalador partner de **Prosegur Alarmas**, **HOM-2026-031**.
+- **Procedimientos**: PR-INS-001, PR-MAN-004, PR-SOP-007, PR-RGPD-002, PR-COM-003, PR-BAJ-005, PR-QLT-006.

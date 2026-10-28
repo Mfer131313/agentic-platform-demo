@@ -64,6 +64,7 @@
   <script src="assets/js/industries/congelados/meta.js"></script>
   <script src="assets/js/industries/autopista/meta.js"></script>
   <script src="assets/js/industries/alarmas/meta.js"></script>
+  <script src="assets/js/industries/norel/meta.js"></script>
   <script src="assets/js/industries/maquinaria/en/meta.js"></script>
   <script src="assets/js/industries/banca/en/meta.js"></script>
   <script src="assets/js/industries/retail/en/meta.js"></script>
@@ -72,6 +73,7 @@
   <script src="assets/js/industries/congelados/en/meta.js"></script>
   <script src="assets/js/industries/autopista/en/meta.js"></script>
   <script src="assets/js/industries/alarmas/en/meta.js"></script>
+  <script src="assets/js/industries/norel/en/meta.js"></script>
 </head>
 <body>
   <header class="top">
@@ -84,7 +86,7 @@
   <main class="wrap">
     <section class="hero">
       <div class="kicker" data-t="kicker">Demostración por industria</div>
-      <h1 data-t="h1">La misma consola y los mismos casos con agentes, en ocho sectores</h1>
+      <h1 data-t="h1">La misma consola y los mismos casos con agentes, en nueve sectores</h1>
       <p class="lead" data-t="lead">Cada consola repite las ocho escenas de la demo de Congelados de Navarra con los sistemas, la normativa y los casos de su sector. Las empresas y los datos son ficticios, y todo se ejecuta en el navegador sin tocar sistemas reales.</p>
       <ul class="scenes" id="scenes" aria-label="Escenas de cada consola">
         <li>Resumen del turno</li><li>De palabras a workflow</li><li>Alarma con aprobación humana</li><li>Reclamación de cliente</li><li>Simulacro de trazabilidad</li><li>Cuestionario de cliente</li><li>Procedimientos con citas</li><li>Cómo encaja Agentic Platform</li>
@@ -144,6 +146,12 @@
           ['Reclamación', 'Falsas alarmas y cargos de desplazamiento en un contrato de Sector Alarm (CLM-2026-0619)'],
           ['Simulacro', 'Campaña por el lote PIR-2607-A de detectores con batería defectuosa (912 hogares)'],
           ['Cuestionario', 'Homologación anual de instalador partner de Prosegur Alarmas']
+        ],
+        norel: [
+          ['Alarma', 'Salmonella en la colina cloruro MP-2610-CC-118: 4 lotes de premezcla y 9 clientes afectados'],
+          ['Reclamación', 'Vitamina E un 18 % por debajo de lo declarado en el lote PRM-2610-0388 (CLM-2026-1028)'],
+          ['Simulacro', 'Retirada de la materia prima MP-2610-CC-118: 96 t, 148 albaranes y 3 países'],
+          ['Cuestionario', 'Auditoría de proveedor de aditivos de un integrador avícola (GMP+ / FAMI-QS)']
         ]
       };
       var CASES_EN = {
@@ -194,12 +202,18 @@
           ['Complaint', 'False alarms and call-out charges on a Sector Alarm contract (CLM-2026-0619)'],
           ['Drill', 'Campaign for detector batch PIR-2607-A with a faulty battery (912 homes)'],
           ['Questionnaire', 'Annual partner-installer accreditation for Prosegur Alarmas']
+        ],
+        norel: [
+          ['Alarm', 'Salmonella in choline chloride MP-2610-CC-118: 4 premix batches and 9 customers affected'],
+          ['Complaint', 'Vitamin E 18 % below the declared level in batch PRM-2610-0388 (CLM-2026-1028)'],
+          ['Drill', 'Withdrawal of raw material MP-2610-CC-118: 96 t, 148 delivery notes and 3 countries'],
+          ['Questionnaire', 'Additive supplier audit from a poultry integrator (GMP+ / FAMI-QS)']
         ]
       };
       var T = {
         es: { scenes: ['Resumen del turno', 'De palabras a workflow', 'Alarma con aprobación humana', 'Reclamación de cliente', 'Simulacro de trazabilidad', 'Cuestionario de cliente', 'Procedimientos con citas', 'Cómo encaja Agentic Platform'], conn: 'Conectores', open: 'Abrir la consola de ' },
         en: { scenes: ['Shift summary', 'From words to workflow', 'Alarm with human approval', 'Customer complaint', 'Traceability drill', 'Customer questionnaire', 'Procedures with citations', 'How Agentic Platform fits'], conn: 'Connectors', open: 'Open the console for ',
-          sub: 'MFM agent platform', kicker: 'Demo by industry', h1: 'The same console and the same agent use cases, in eight sectors',
+          sub: 'MFM agent platform', kicker: 'Demo by industry', h1: 'The same console and the same agent use cases, in nine sectors',
           lead: 'Each console repeats the eight scenes of the Congelados de Navarra demo with the systems, regulations and cases of its sector. Companies and data are fictitious, and everything runs in the browser without touching real systems.',
           ref: 'Reference demo: Congelados de Navarra, frozen food.', refa: 'Open the original demo ↗',
           foot: 'Synthetic demo data prepared by MFM. Actions (holds, notices, publications) are simulated and stay in this browser only.' }
@@ -218,7 +232,7 @@
         b.setAttribute('aria-pressed', String(b.getAttribute('data-lang') === LANG));
         b.addEventListener('click', function () { try { localStorage.setItem('agentic-ind-lang', b.getAttribute('data-lang')); } catch (e) { /* */ } location.search = '?lang=' + b.getAttribute('data-lang'); });
       });
-      var ORDER = ['maquinaria', 'banca', 'retail', 'cerveceria', 'abogados', 'congelados', 'autopista', 'alarmas'];
+      var ORDER = ['maquinaria', 'banca', 'retail', 'cerveceria', 'abogados', 'congelados', 'autopista', 'alarmas', 'norel'];
       var P = window.AGENTIC_INDUSTRIES || {};
       var PE = window.AGENTIC_INDUSTRIES_EN || {};
       var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };

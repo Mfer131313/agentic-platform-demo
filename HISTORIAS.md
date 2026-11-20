@@ -137,3 +137,14 @@ Twilio SMS, Google Workspace, Slack. Fecha de la demo: lunes 19/10/2026. El cat�
 - **Simulacro**: lote **PIR-2607-A** del detector PIR-200 (Sentinela Electronics, batería de litio): 1.386 instalados en **912 hogares**; campaña **REC-2026-1019**.
 - **Cuestionario**: homologación anual de instalador partner de **Prosegur Alarmas**, **HOM-2026-031**.
 - **Procedimientos**: PR-INS-001, PR-MAN-004, PR-SOP-007, PR-RGPD-002, PR-COM-003, PR-BAJ-005, PR-QLT-006.
+
+## Fruta subtropical · Subtropicales Axarquía, S.A. (Centro de manipulado de la Axarquía, Málaga)
+
+Empresa ficticia inspirada en productores-exportadores de aguacate y mango del sur de España y en una tienda online de fruta gourmet.
+Todas las cifras, lotes, clientes y personas son sintéticos. Fecha de la demo: viernes 20/11/2026.
+
+- **Alarma (05:50)**: **ALM-FRIO-0612**, cámara de maduración **CM-06** a 11,4 °C (consigna 6 °C); 9 palés de aguacate Hass, lote **AH-2611-118**, 14 t.
+- **Reclamación**: **Supermercados Levante Fresh**, 35 % de piezas duras en el pedido **PED-2026-44718** (lote AH-2611-092); caso **CLM-2026-1120**.
+- **Simulacro**: lote de mango **MG-2611-KE-031** con residuo de plaguicida por encima del LMR; 18 t = 6 t en el centro + 12 t expedidas; 11 clientes y 640 pedidos online; campaña **RET-2026-1120**.
+- **Cuestionario**: auditoría de proveedor de **Handelsgruppe Nordfrisch**, **CUE-2026-063** (GLOBALG.A.P., GRASP, IFS Food).
+- **Procedimientos**: PR-REC-001, PR-MAD-002, PR-CAL-004, PR-TRZ-003, PR-PRO-005, PR-ECO-002, PR-EXP-004.

@@ -921,7 +921,7 @@ window.CN_EN = {
   "Prepara el bloqueo y pide la aprobación de Calidad": "Prepare the hold and order the approval Quality",
   "Incidencias": "Incidents",
   "Abre la no conformidad y avisa a expedición": "Open the non-conformity and warn dispatch",
-  "Orquestador": "Orchestratortor",
+  "Orquestador": "Orchestrator",
   "Agentic Platform · agente Monitor de cadena de frío": "Agentic Platform · agent Monitor of cold chain",
   "Agentic Platform · agente Trazabilidad": "Agentic Platform · agent Traceability",
   "Agentic Platform · agente Bloqueo de calidad": "Agentic Platform · agent Quality hold",

@@ -240,49 +240,115 @@
       scope: '13 plantas',
       nodes: [['t', 'trigger', 'Cada día a las 06:00', 'Hora local', []], ['d', 'agent', 'Energía', 'kWh por tonelada', ['Histórico de series', 'MES']], ['c', 'decision', '¿Sube más del 8 %?', 'Frente a 6 semanas', []], ['x', 'agent', 'Diagnóstico', 'Causa probable', ['SCADA']], ['o', 'output', 'Parte a la planta', 'Con evidencia', ['Teams']]] }
   ];
+  /* Las sencillas son una cadena; las de extremo a extremo (automations.js) tienen ramas, límites y lectura de la instrucción. */
+  const simpleResult = (t, kind) => (kind === 'trigger' ? (t.id === 'vib' ? '3 espirales habrían disparado: Valdecierzo, Binh Lac y Pinewood' : t.id === 'prog' ? '1 cambio en Pinewood' : '13 plantas evaluadas')
+    : kind === 'decision' ? (t.id === 'prog' ? 'Sí, orden CAM-2026-0391' : 'Puerto Sur +11 % en frío') : 'Correcto, sin efectos reales');
+  const SIMPLE = TEMPLATES.map((t) => Object.assign({}, t, {
+    steps: t.nodes.map(([id, kind, label, sub, systems], i) => [id, i, kind, label, sub, systems, simpleResult(t, kind), kind === 'approval' ? 'warn' : 'ok']),
+    edges: t.nodes.slice(1).map((n, i) => [t.nodes[i][0], n[0]])
+  }));
+  const COMPLEX = HB.AUTOMATIONS.map((t) => Object.assign({ complex: true }, t));
+  const ALL = COMPLEX.concat(SIMPLE);
+  const systemsOf = (t) => Array.from(new Set(t.steps.flatMap((x) => x[5])));
+  const statusAfter = (x) => (x[7] === 'skip' ? 'skipped' : x[2] === 'approval' ? 'waiting' : 'done');
+  const ordered = (t) => t.steps.slice().sort((a2, b2) => a2[1] - b2[1]);
+  const testSteps = (t) => ordered(t).map((x, i) => ({ node: x[0], status: statusAfter(x), agent: x[3], system: x[5][0], action: x[4], ms: 420 + (i % 4) * 110,
+    tone: x[2] === 'approval' ? 'warn' : x[7] === 'skip' ? undefined : x[7],
+    result: x[2] === 'approval' && x[7] !== 'skip' ? 'Se habría pedido aprobación; en la prueba no se envía' : x[6] }));
+  function pick(text) {
+    const exact = ALL.find((t) => t.text === text || T(t.text) === text);
+    if (exact) return exact;
+    /* Gana la compleja solo si la instrucción toca al menos dos de sus temas y más que cualquier sencilla. */
+    const score = (t) => (text.match(new RegExp(t.match.source, 'gi')) || []).length;
+    const best = (pool) => pool.reduce((w, t) => (score(t) > w.n ? { t, n: score(t) } : w), { t: null, n: 0 });
+    const simple = best([SIMPLE[1], SIMPLE[2], SIMPLE[0]]);
+    const complex = best(COMPLEX);
+    if (complex.n >= 2 && (complex.n > simple.n || text.length > 220)) return complex.t;
+    return simple.t;
+  }
+
+  function understood(t) {
+    const label = (id) => t.steps.find((x) => x[0] === id);
+    const systems = systemsOf(t).map((name) => {
+      const used = t.steps.filter((x) => x[5].includes(name));
+      const writes = used.some((x) => x[2] === 'action' || x[2] === 'output');
+      const asks = used.every((x) => x[2] === 'approval');
+      return { name, used, access: asks ? 'Pide aprobación' : writes ? 'Lee y escribe' : 'Solo lectura' };
+    });
+    return html`
+      <div class="section">${card({ title: 'Cómo se ha entendido la instrucción', sub: 'Cada petición y los pasos que genera', icon: 'list-checks', flush: true, body: table({ dense: true, rows: t.read, cols: [
+        { label: 'Lo que has pedido', render: (r) => html`<strong>${r[0]}</strong>` },
+        { label: 'Pasos creados', render: (r) => html`${r[1].map((id) => html`<span class="hb-move">${label(id)[3]}</span>`)}` },
+        { label: 'Sistemas', render: (r) => App.sysList(Array.from(new Set(r[1].flatMap((id) => label(id)[5])))) }
+      ] }) })}</div>
+      <div class="grid cols-7-5 section">
+        ${card({ title: 'Sistemas que intervienen', sub: 'Conectores de demostración', icon: 'database', flush: true, body: table({ dense: true, rows: systems, cols: [
+          { label: 'Sistema', render: (r) => App.sys(r.name) },
+          { label: 'Para qué paso', render: (r) => html`${r.used.map((x) => html`<span class="hb-move">${x[3]}</span>`)}` },
+          { label: 'Acceso', render: (r) => chip(r.access === 'Lee y escribe' ? 'warn' : r.access === 'Pide aprobación' ? 'brand' : 'neutral', r.access) }
+        ] }) })}
+        ${card({ title: 'Límites y aprobaciones', icon: 'shield-check', body: html`<ul class="hb-limits">${t.limits.map((l) => html`<li>${icon('check', 15)}<span>${l}</span></li>`)}</ul>` })}
+      </div>`;
+  }
+
   App.scene({
     id: 'automatizar', order: 70, section: 'Decisiones', nav: 'Crear automatización', title: 'De palabras a automatización', icon: 'workflow',
     presenter: {
-      say: ['El jefe de mantenimiento describe la regla como se la diría a su equipo.', 'La plataforma la convierte en pasos visibles, con sus sistemas y su punto de aprobación.', 'Una vez publicada, se aplica en todas las plantas que correspondan.'],
-      next: 'Elige un ejemplo, pulsa «Convertir» y publica.'
+      say: ['El responsable describe la regla como se la diría a su equipo, aunque cruce mantenimiento, compras, calidad y logística.', 'La plataforma la convierte en pasos con ramas, dice qué ha entendido de cada petición y qué sistemas lee o escribe.', 'Las aprobaciones y los límites quedan a la vista antes de publicar.'],
+      next: 'Elige «Avería crítica de extremo a extremo», pulsa «Convertir» y después «Probar».'
     },
     render(root, ctx) {
       const v = ctx.vars;
-      const tpl = TEMPLATES.find((t) => t.id === v.tpl);
+      const tpl = ALL.find((t) => t.id === v.tpl);
       const published = App.state.workflows;
-      const graph = tpl ? App.planGraph({ title: T(tpl.name), nodeWidth: 168, nodes: HB.graphNodes(tpl.nodes.map(([id, kind, label, sub, systems]) => ({ id, kind, label, sub, systems, status: 'pending' }))), edges: tpl.nodes.slice(1).map((n, i) => [tpl.nodes[i][0], n[0]]) }) : '';
+      const tested = !!tpl && v.tested === tpl.id;
+      const graph = tpl ? App.planGraph({ title: T(tpl.name), layout: tpl.complex ? 'tb' : 'auto', nodeWidth: 168, nodeWidthTB: 236,
+        nodes: HB.graphNodes(tpl.steps.map((x) => ({ id: x[0], layer: x[1], kind: x[2], label: x[3], sub: x[4], systems: x[5], status: tested ? statusAfter(x) : 'pending' }))),
+        edges: tpl.edges.map(([from, to, label]) => ({ from, to, label: label && T(label) })) }) : '';
+      const count = (k) => tpl.steps.filter((x) => x[2] === k).length;
       root.innerHTML = String(html`
-        ${pageHead({ title: 'De palabras a automatización', desc: 'Describe qué debe pasar. La plataforma propone los pasos y respeta la política de autonomía.' })}
+        ${pageHead({ title: 'De palabras a automatización', desc: 'Describe qué debe pasar. La plataforma propone los pasos, los sistemas que intervienen y las aprobaciones.' })}
         ${card({ title: 'Qué quieres que ocurra', icon: 'edit', body: html`
-          <div class="btn-group mb-2">${TEMPLATES.map((t) => button({ label: t.label, size: 'sm', attrs: { 'data-tpl': t.id } }))}</div>
+          <div class="label mb-2">De extremo a extremo: varios sistemas, ramas y aprobaciones</div>
+          <div class="hb-examples">${COMPLEX.map((t) => html`<button type="button" class="hb-example${v.picked === t.id ? ' is-on' : ''}" data-tpl="${t.id}"><strong>${t.label}</strong><span><b>${t.steps.length}</b> pasos · <b>${systemsOf(t).length}</b> sistemas</span></button>`)}</div>
+          <div class="label mt-3 mb-2">Sencillas</div>
+          <div class="btn-group mb-2">${SIMPLE.map((t) => button({ label: t.label, size: 'sm', attrs: { 'data-tpl': t.id } }))}</div>
           <label class="sr-only" for="wf-text">Descripción de la regla</label>
-          <textarea class="textarea" id="wf-text" placeholder="Por ejemplo: si la vibración de una espiral sube, avisa y propón una ventana de mantenimiento…">${v.text || ''}</textarea>
+          <textarea class="textarea${(v.text || '').length > 220 ? ' hb-long' : ''}" id="wf-text" placeholder="Por ejemplo: si la vibración de una espiral sube, avisa y propón una ventana de mantenimiento…">${v.text || ''}</textarea>
           <div class="mt-3">${button({ label: 'Convertir en automatización', variant: 'primary', icon: 'workflow', attrs: { 'data-build': '1' } })}</div>` })}
-        ${v.nomatch ? html`<div class="section">${callout({ tone: 'warn', title: 'Esta demostración solo reconoce tres temas', body: html`<span>Escribe sobre vibración, cambios de programa o energía, o elige un ejemplo. En un piloto, un modelo interpreta la frase.</span>` })}</div>` : ''}
-        ${tpl ? html`<div class="section">${card({ title: tpl.name, sub: `Alcance: ${tpl.scope}`, icon: 'git-branch', actions: published.some((w) => w.id === tpl.id) ? chip('ok', 'Publicado') : html`${button({ label: 'Probar con datos de anoche', size: 'sm', icon: 'play', attrs: { 'data-test': '1' } })}${button({ label: 'Publicar', size: 'sm', variant: 'primary', icon: 'upload', attrs: { 'data-pub': '1' } })}`, body: html`${graph}<div id="wf-test" class="mt-4"></div>` })}</div>` : ''}
-        <div class="section">${card({ title: 'Publicadas en esta sesión', icon: 'list-checks', flush: true, body: table({ dense: true, rows: published, empty: 'Todavía no has publicado ninguna.', cols: [{ label: 'Automatización', render: (w) => html`<strong>${w.name}</strong>` }, { label: 'Alcance', key: 'scope' }, { label: 'Publicada', render: (w) => fmt.time(w.at) }, { label: 'Estado', render: () => chip('active', 'Activa') }] }) })}</div>`);
+        ${v.nomatch ? html`<div class="section">${callout({ tone: 'warn', title: 'Esta demostración solo reconoce los temas de los ejemplos', body: html`<span>Escribe sobre alguno de ellos o elige un ejemplo. En un piloto, un modelo interpreta la instrucción.</span>` })}</div>` : ''}
+        ${tpl ? html`<div class="section" id="wf-result">${card({ title: tpl.name, sub: `Alcance: ${tpl.scope}`, icon: 'git-branch', actions: html`${button({ label: 'Probar con datos de anoche', size: 'sm', icon: 'play', attrs: { 'data-test': '1' } })}${published.some((w) => w.id === tpl.id) ? chip('ok', 'Publicado') : button({ label: 'Publicar', size: 'sm', variant: 'primary', icon: 'upload', attrs: { 'data-pub': '1' } })}`,
+          body: html`${App.stats([{ label: 'Pasos', value: tpl.steps.length }, { label: 'Agentes', value: count('agent') }, { label: 'Sistemas', value: systemsOf(tpl).length }, { label: 'Aprobaciones', value: count('approval'), tone: 'warn' }, { label: 'Condiciones', value: count('decision') }])}<div id="wf-test" class="mt-4"></div><div class="hb-wf${tpl.complex ? ' is-complex' : ''} mt-4">${graph}</div>` })}</div>
+          ${tpl.complex ? understood(tpl) : ''}` : ''}
+        <div class="section">${card({ title: 'Publicadas en esta sesión', icon: 'list-checks', flush: true, body: table({ dense: true, rows: published, empty: 'Todavía no has publicado ninguna.', cols: [{ label: 'Automatización', render: (w) => html`<strong>${w.name}</strong>` }, { label: 'Alcance', key: 'scope' }, { label: 'Pasos', num: true, render: (w) => w.steps || '—' }, { label: 'Sistemas', num: true, render: (w) => w.systems || '—' }, { label: 'Publicada', render: (w) => fmt.time(w.at) }, { label: 'Estado', render: () => chip('active', 'Activa') }] }) })}</div>`);
+      if (tested) App.reasoningStream(ctx.$('#wf-test'), testSteps(tpl), { title: 'Prueba sin efectos', instant: true, maxHeight: 260 });
       ctx.on('input', '#wf-text', (e, el) => { v.text = el.value; });
-      ctx.on('click', '[data-tpl]', (e, el) => { const t = TEMPLATES.find((x) => x.id === el.getAttribute('data-tpl')); v.text = t.text; v.tpl = null; v.nomatch = false; ctx.rerender(); });
+      ctx.on('click', '[data-tpl]', (e, el) => { const t = ALL.find((x) => x.id === el.getAttribute('data-tpl')); v.text = t.text; v.picked = t.id; v.tpl = null; v.tested = null; v.nomatch = false; ctx.rerender(); });
       ctx.on('click', '[data-build]', () => {
         const text = (v.text || '').trim();
         if (!text) { ctx.toast('Escribe la regla o elige un ejemplo', { tone: 'warn' }); return; }
-        const exact = TEMPLATES.find((t) => t.text === text || T(t.text) === text);
-        const order = [TEMPLATES[1], TEMPLATES[2], TEMPLATES[0]];
-        const t = exact || order.find((x) => x.match.test(text));
+        const t = pick(text);
         v.tpl = t ? t.id : null;
+        v.tested = null;
         v.nomatch = !t;
         if (t) ctx.audit('Automatización generada desde texto', t.name);
         ctx.rerender();
+        const r = ctx.$('#wf-result'); if (r) r.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
       ctx.on('click', '[data-pub]', () => {
-        App.update((s) => { s.workflows.push({ id: tpl.id, name: tpl.name, scope: tpl.scope, at: App.nowISO() }); });
+        App.update((s) => { s.workflows.push({ id: tpl.id, name: tpl.name, scope: tpl.scope, at: App.nowISO(), steps: tpl.steps.length, systems: systemsOf(tpl).length }); });
         ctx.audit('Automatización publicada', `${tpl.name} · ${tpl.scope}`);
         ctx.toast('Publicada (simulado)', { tone: 'ok' });
         ctx.rerender();
       });
       ctx.on('click', '[data-test]', () => {
-        App.reasoningStream(ctx.$('#wf-test'), tpl.nodes.map(([, kind, label, sub, systems], i) => ({ agent: label, system: systems[0], action: sub, ms: 600 + i * 120, tone: kind === 'approval' ? 'warn' : 'ok',
-          result: kind === 'trigger' ? (tpl.id === 'vib' ? '3 espirales habrían disparado: Valdecierzo, Binh Lac y Pinewood' : tpl.id === 'prog' ? '1 cambio en Pinewood' : '13 plantas evaluadas') : kind === 'approval' ? 'Se habría pedido aprobación; en la prueba no se envía' : kind === 'decision' ? (tpl.id === 'prog' ? 'Sí, orden CAM-2026-0391' : 'Puerto Sur +11 % en frío') : 'Correcto, sin efectos reales' })), { signal: ctx.signal, title: 'Prueba sin efectos' });
+        const mark = (id, status) => ctx.$$(`.hb-wf [data-node="${id}"]`).forEach((g) => { g.classList.remove('is-pending', 'is-active', 'is-done', 'is-waiting', 'is-skipped', 'is-error'); g.classList.add('is-' + status); });
+        tpl.steps.forEach((x) => mark(x[0], 'pending'));
+        const steps = testSteps(tpl);
+        mark(steps[0].node, 'active');
+        const run = App.reasoningStream(ctx.$('#wf-test'), steps, { signal: ctx.signal, title: 'Prueba sin efectos', maxHeight: 260, minDelay: 320,
+          onStep: (s2, k) => { mark(s2.node, s2.status); if (steps[k + 1]) mark(steps[k + 1].node, 'active'); } });
+        run.done.then(() => { v.tested = tpl.id; ctx.audit('Automatización probada', `${tpl.name} · sin efectos reales`); });
       });
     }
   });

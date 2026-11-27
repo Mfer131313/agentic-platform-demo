@@ -958,7 +958,6 @@ Máquinas, PLC, direcciones IP, firmware, variables, lecturas, alarmas, órdenes
 Acciones ¦ Actions
 Escrituras en PLC, órdenes de trabajo, reservas y avisos se simulan y no salen de este navegador. Todo queda en el registro de auditoría de la sesión y se borra con «Reiniciar demo». ¦ PLC writes, work orders, reservations and alerts are simulated and never leave this browser. Everything goes to the session audit log and is cleared with “Reset demo”.
 Conectores ¦ Connectors
-OPC UA, MQTT Sparkplug B, EtherNet/IP, PROFINET, SAP PM, MES, SCADA y Microsoft 365 son conectores de demostración. En un proyecto real, los sistemas se confirman en el descubrimiento. ¦ OPC UA, MQTT Sparkplug B, EtherNet/IP, PROFINET, SAP PM, MES, SCADA and Microsoft 365 are demonstration connectors. In a real project, the systems are confirmed during discovery.
 Seguridad industrial ¦ Industrial safety
 En la propuesta que representa la demo, los agentes nunca escriben en la lógica ni en los sistemas de seguridad del PLC. Solo pueden cambiar consignas de una lista cerrada, dentro de límites, con aprobación humana y a través del equipo edge de la planta. ¦ In the approach shown here, agents never write to PLC logic or safety systems. They may only change setpoints from a closed list, within limits, with human approval and through the plant’s edge device.
 Modelo de lenguaje ¦ Language model
@@ -1473,6 +1472,289 @@ Cada tarjeta es una máquina, con su indicador más relevante ahora mismo. ¦ Ea
 Revisar esto planta por planta lleva la mañana; el agente lo hace en segundos y deja los avisos creados. ¦ Reviewing this plant by plant takes the morning; the agent does it in seconds and leaves the notifications created.
 Lo que ya tenía una decisión abierta se actualiza, no se duplica. ¦ Anything with an open decision is updated, not duplicated.
 Pulsa «Revisar el panel con el agente» y mira cómo recorre las plantas. ¦ Click “Let the agent review the board” and watch it go through the plants.
+Describe qué debe pasar. La plataforma propone los pasos, los sistemas que intervienen y las aprobaciones. ¦ Describe what should happen. The platform proposes the steps, the systems involved and the approvals.
+De extremo a extremo: varios sistemas, ramas y aprobaciones ¦ End to end: several systems, branches and approvals
+Sencillas ¦ Simple
+⟦0⟧ pasos · ⟦1⟧ sistemas ¦ ⟦0⟧ steps · ⟦1⟧ systems
+pasos · ¦ steps ·
+pasos ¦ steps
+sistemas ¦ systems
+Pasos ¦ Steps
+Agentes ¦ Agents
+Sistemas ¦ Systems
+Aprobaciones ¦ Approvals
+Condiciones ¦ Conditions
+Sistema ¦ System
+Para qué paso ¦ Used by step
+Acceso ¦ Access
+Lee y escribe ¦ Read and write
+Pide aprobación ¦ Asks for approval
+Solo lectura ¦ Read only
+Cómo se ha entendido la instrucción ¦ How the instruction was understood
+Cada petición y los pasos que genera ¦ Each request and the steps it creates
+Lo que has pedido ¦ What you asked for
+Pasos creados ¦ Steps created
+Sistemas que intervienen ¦ Systems involved
+Conectores de demostración ¦ Demonstration connectors
+Límites y aprobaciones ¦ Limits and approvals
+Esta demostración solo reconoce los temas de los ejemplos ¦ This demonstration only recognises the example topics
+Escribe sobre alguno de ellos o elige un ejemplo. En un piloto, un modelo interpreta la instrucción. ¦ Write about one of them or pick an example. In a pilot, a model interprets the instruction.
+Automatización probada ¦ Automation tested
+El responsable describe la regla como se la diría a su equipo, aunque cruce mantenimiento, compras, calidad y logística. ¦ The manager describes the rule as they would to their team, even when it cuts across maintenance, purchasing, quality and logistics.
+La plataforma la convierte en pasos con ramas, dice qué ha entendido de cada petición y qué sistemas lee o escribe. ¦ The platform turns it into branching steps, shows how it understood each request and which systems it reads or writes.
+Las aprobaciones y los límites quedan a la vista antes de publicar. ¦ Approvals and limits are visible before publishing.
+Elige «Avería crítica de extremo a extremo», pulsa «Convertir» y después «Probar». ¦ Pick “Critical breakdown end to end”, click “Turn into automation”, then “Test”.
+OPC UA, MQTT Sparkplug B, EtherNet/IP, PROFINET, SAP PM, MES, SCADA y Microsoft 365 son conectores de demostración, igual que los de compras, almacén, laboratorio, transporte, clientes, ciberseguridad, energía y personal que usan las automatizaciones. En un proyecto real, los sistemas se confirman en el descubrimiento. ¦ OPC UA, MQTT Sparkplug B, EtherNet/IP, PROFINET, SAP PM, MES, SCADA and Microsoft 365 are demonstration connectors, as are the purchasing, warehouse, laboratory, transport, customer, cybersecurity, energy and HR ones used by the automations. In a real project, the systems are confirmed during discovery.
+Directorio de usuarios ¦ User directory
+Mercado eléctrico ¦ Electricity market
+Sistema de personal ¦ HR system
+Sí ¦ Yes
+No ¦ No
+Avería crítica de extremo a extremo ¦ Critical breakdown end to end
+Avería crítica: del PLC a la compra, la producción y la calidad ¦ Critical breakdown: from the PLC to purchasing, production and quality
+Cuando un congelador espiral supere 7,1 mm/s de vibración o la intensidad del motor suba más de un 20 % durante 15 minutos, investiga la causa comparando con las máquinas gemelas de toda la red y con el histórico de averías en SAP PM. Si el repuesto no está en la planta, búscalo en el resto de plantas y, si tampoco está, prepara la solicitud de compra en SAP MM. Calcula con el MES qué pedidos se verían afectados, propón moverlos a otra línea y replanifica las cargas en el sistema de transporte. Calidad debe retener en el almacén el producto que haya pasado por el túnel fuera de temperatura y pedir muestreo al laboratorio. Pide aprobación a la jefatura de planta antes de reducir la velocidad, y a Compras si la compra supera 5.000 €. Después crea la orden de trabajo, avisa al turno por Teams y comprueba a los 30 minutos que la vibración baja; si no baja, escala a la dirección global. ¦ When a spiral freezer exceeds 7.1 mm/s of vibration or motor current rises more than 20% for 15 minutes, investigate the cause by comparing with twin machines across the network and with the breakdown history in SAP PM. If the spare part is not on site, look for it in the other plants and, if it is not there either, prepare the purchase requisition in SAP MM. Use the MES to work out which orders would be affected, propose moving them to another line and replan the loads in the transport system. Quality must hold in the warehouse any product that went through the tunnel out of temperature and request laboratory sampling. Ask the plant manager for approval before reducing speed, and Purchasing if the purchase exceeds €5,000. Then create the work order, notify the shift on Teams and check after 30 minutes that vibration is falling; if it is not, escalate to global management.
+Vibración o intensidad altas ¦ High vibration or current
+15 min seguidos ¦ 15 min in a row
+VCZ-L3-ESP-01: 7,6 mm/s e intensidad +23 % ¦ VCZ-L3-ESP-01: 7.6 mm/s and current +23%
+Diagnóstico entre gemelas ¦ Twin diagnosis
+Misma curva que la avería de Nowa Wola en marzo ¦ Same curve as the Nowa Wola breakdown in March
+Buscar repuesto ¦ Find spare part
+En toda la red ¦ Across the network
+Sin stock local · 2 unidades en La Ribera ¦ No local stock · 2 units in La Ribera
+Impacto en producción ¦ Production impact
+Pedidos afectados ¦ Affected orders
+2 órdenes de producción afectadas ¦ 2 production orders affected
+Retener producto ¦ Hold product
+Fuera de temperatura ¦ Out of temperature
+Ningún palé fuera de temperatura en el periodo ¦ No pallet out of temperature in the period
+¿Hay repuesto? ¦ Part available?
+En alguna planta ¦ In any plant
+Sí, en La Ribera: no hace falta comprar ¦ Yes, in La Ribera: no purchase needed
+Replanificar cargas ¦ Replan loads
+Cargas sin cambios ¦ Loads unchanged
+Laboratorio ¦ Laboratory
+Muestra preventiva solicitada ¦ Precautionary sample requested
+Solicitud de compra ¦ Purchase requisition
+Solo si no hay stock ¦ Only if no stock
+No se ejecuta: hay stock en la red ¦ Not run: stock exists in the network
+Reducir velocidad ¦ Reduce speed
+No se pide: no hay compra ¦ Not requested: nothing to buy
+Compras ¦ Purchasing
+Si supera 5.000 € ¦ Above €5,000
+Consigna al 92 % preparada ¦ 92% setpoint ready
+Orden y aviso al turno ¦ Work order and shift notice
+Con la evidencia ¦ With the evidence
+Orden y mensaje listos ¦ Order and message ready
+¿Baja en 30 min? ¦ Falling in 30 min?
+Verificación ¦ Verification
+Previsto: 5,9 mm/s ¦ Expected: 5.9 mm/s
+Escalar a dirección ¦ Escalate to management
+Dirección global ¦ Global management
+No haría falta ¦ Would not be needed
+Cerrar y aprender ¦ Close and learn
+Actualiza el modelo ¦ Updates the model
+Caso añadido al histórico de la red ¦ Case added to the network history
+Detectar la avería ¦ Detect the fault
+Investigar la causa en toda la red ¦ Investigate the cause network-wide
+Asegurar el repuesto y comprar si falta ¦ Secure the part and buy if missing
+Proteger pedidos y transporte ¦ Protect orders and transport
+Proteger la calidad del producto ¦ Protect product quality
+Aprobaciones antes de actuar ¦ Approvals before acting
+Actuar, avisar y verificar ¦ Act, notify and verify
+La velocidad solo puede moverse entre el 85 % y el 100 % ¦ Speed may only move between 85% and 100%
+Ninguna escritura en el PLC sin aprobación de la jefatura de planta ¦ No PLC write without plant manager approval
+Compras aprueba cualquier pedido superior a 5.000 € ¦ Purchasing approves any order above €5,000
+Los sistemas de seguridad no se tocan ¦ Safety systems are not touched
+Excursión de frío y clientes ¦ Cold excursion and customers
+Excursión de frío: lotes, retención, clientes y autoridad ¦ Cold excursion: batches, holds, customers and authority
+Todas las espirales de la red ¦ All spirals in the network
+Si la temperatura de salida del producto de cualquier espiral supera −18 °C durante más de 5 minutos, o hay un desescarche fuera de ciclo en plena producción, identifica en el MES los lotes fabricados en esa ventana y localiza cada caja en el almacén y en las expediciones. Bloquea de inmediato lo que siga en nuestros almacenes, pide muestreo al laboratorio y revisa si el programa del PLC ha cambiado. Para lo ya entregado, saca del CRM los clientes afectados y prepara el aviso en su idioma, pero no lo envíes sin la aprobación de Calidad. Si hay riesgo para el consumidor, convoca al comité de crisis y prepara el expediente para la autoridad. Abre la orden de mantenimiento, genera el borrador del informe 8D con la evidencia de los PLC y envía a Calidad un resumen cada hora hasta el cierre. ¦ If the product exit temperature of any spiral rises above −18 °C for more than 5 minutes, or there is an off-cycle defrost during production, identify in the MES the batches made in that window and locate every case in the warehouse and in shipments. Immediately hold whatever is still in our warehouses, request laboratory sampling and check whether the PLC program has changed. For what has already been delivered, get the affected customers from the CRM and prepare the notice in their language, but do not send it without Quality approval. If there is a risk to consumers, convene the crisis committee and prepare the file for the authority. Open the maintenance work order, generate the draft 8D report with the PLC evidence and send Quality an hourly summary until closure.
+Producto sobre −18 °C ¦ Product above −18 °C
+O desescarche en producción ¦ Or defrost during production
+BNL-L2-ESP-01: salida a −11 °C el 18/11 ¦ BNL-L2-ESP-01: exit at −11 °C on 18/11
+Lotes de la ventana ¦ Batches in the window
+Qué se fabricó ¦ What was made
+2 lotes y 414 cajas ¦ 2 batches and 414 cases
+Localizar cajas ¦ Locate cases
+Almacén y expediciones ¦ Warehouse and shipments
+308 en almacén · 106 entregadas ¦ 308 in warehouse · 106 delivered
+Revisar el PLC ¦ Check the PLC
+Bloquear stock propio ¦ Hold own stock
+Inmediato ¦ Immediate
+308 cajas quedarían bloqueadas ¦ 308 cases would be held
+Muestras pedidas a laboratorio ¦ Samples requested from the lab
+Clientes afectados ¦ Affected customers
+Aviso en su idioma ¦ Notice in their language
+2 clientes · borradores en inglés ¦ 2 customers · drafts in English
+Orden de mantenimiento ¦ Maintenance work order
+Válvula de desescarche ¦ Defrost valve
+Orden preparada ¦ Order ready
+¿Riesgo al consumidor? ¦ Consumer risk?
+Según Calidad y laboratorio ¦ Per Quality and lab
+No declarado: pendiente de muestras ¦ None reported: awaiting samples
+Calidad ¦ Quality
+Antes de avisar ¦ Before notifying
+Comité y expediente ¦ Committee and file
+Solo si hay riesgo ¦ Only if there is risk
+No se ejecuta de momento ¦ Not run for now
+Avisar a clientes ¦ Notify customers
+Tras aprobación ¦ After approval
+Avisos listos, sin enviar ¦ Notices ready, not sent
+8D y resumen horario ¦ 8D and hourly summary
+Hasta el cierre ¦ Until closure
+Borrador 8D con la curva del PLC ¦ Draft 8D with the PLC curve
+Detectar la desviación de frío ¦ Detect the cold deviation
+Saber qué lotes y dónde están ¦ Know which batches and where they are
+Contener el producto ¦ Contain the product
+Descartar un cambio en el PLC ¦ Rule out a PLC change
+Avisar a clientes con aprobación ¦ Notify customers with approval
+Escalar si hay riesgo sanitario ¦ Escalate if there is a health risk
+Reparar y documentar ¦ Repair and document
+El bloqueo interno es automático; liberar producto lo decide Calidad ¦ Internal holds are automatic; releasing product is Quality’s call
+Ningún aviso a clientes ni a la autoridad sin aprobación ¦ No notice to customers or authority without approval
+La evidencia del PLC se guarda sin modificar ¦ PLC evidence is kept unaltered
+Ciberseguridad de los PLC ¦ PLC cybersecurity
+Cambio no autorizado en un PLC: respuesta de ciberseguridad ¦ Unauthorised PLC change: cybersecurity response
+Vigila la huella de todos los programas de PLC y los accesos de ingeniería. Si un programa cambia sin una orden aprobada en SAP PM, cruza en el SIEM y en el directorio de usuarios quién se ha conectado, desde dónde y a qué hora, incluidas las conexiones remotas de fabricantes por VPN. Compara bloque a bloque con la última copia válida, marca si se han tocado bloques de seguridad y revisa en el MES qué producto se ha fabricado desde el cambio. Propón aislar la red industrial de la planta, pero no lo hagas sin la decisión del responsable de ciberseguridad. Si se confirma el incidente, prepara la notificación NIS2 para las primeras 24 horas, restaura la copia válida junto con Ingeniería, pide a Calidad que retenga la producción afectada y registra toda la evidencia. ¦ Watch the fingerprint of every PLC program and all engineering access. If a program changes without an approved order in SAP PM, cross-check in the SIEM and the user directory who connected, from where and at what time, including manufacturers’ remote VPN connections. Compare block by block with the last valid backup, flag whether safety blocks have been touched and check in the MES what product has been made since the change. Propose isolating the plant’s industrial network, but do not do it without the cybersecurity lead’s decision. If the incident is confirmed, prepare the NIS2 notification for the first 24 hours, restore the valid backup with Engineering, ask Quality to hold the affected production and record all the evidence.
+Huella o acceso anómalo ¦ Odd fingerprint or access
+Revisión continua ¦ Continuous check
+1 cambio detectado en Pinewood ¦ 1 change detected in Pinewood
+¿Orden aprobada? ¦ Approved order?
+Cambio autorizado ¦ Authorised change
+En la prueba se simula que no existe ¦ The test assumes there is none
+Archivar ¦ File
+No aplica en esta prueba ¦ Not applicable in this test
+Quién y desde dónde ¦ Who and from where
+Incluye fabricantes ¦ Including manufacturers
+Acceso remoto de fabricante a las 01:52 ¦ Manufacturer remote access at 01:52
+Comparar bloques ¦ Compare blocks
+Con la copia válida ¦ With the valid backup
+2 bloques distintos · seguridad intacta ¦ 2 blocks differ · safety intact
+Producto desde el cambio ¦ Product since the change
+Lotes expuestos ¦ Exposed batches
+1 lote en curso ¦ 1 batch in progress
+Ciberseguridad ¦ Cybersecurity
+Aislar la red ¦ Isolate the network
+¿Incidente confirmado? ¦ Incident confirmed?
+Criterio humano ¦ Human judgement
+Confirmado en el escenario de prueba ¦ Confirmed in the test scenario
+Notificación NIS2 ¦ NIS2 notification
+Primeras 24 h ¦ First 24 h
+Borrador listo, sin enviar ¦ Draft ready, not sent
+Restaurar copia válida ¦ Restore valid backup
+Con Ingeniería ¦ With Engineering
+Copia verificada disponible ¦ Verified backup available
+Retener producción ¦ Hold production
+Lote marcado para retención ¦ Batch flagged for hold
+Evidencia y lecciones ¦ Evidence and lessons
+Expediente ¦ Case file
+Cronología completa guardada ¦ Full timeline saved
+Detectar cambios y accesos ¦ Detect changes and access
+Identificar el origen ¦ Identify the source
+Medir el alcance del cambio ¦ Measure the reach of the change
+Aislar solo con decisión humana ¦ Isolate only on a human decision
+Notificar y restaurar ¦ Notify and restore
+Proteger el producto y la evidencia ¦ Protect product and evidence
+El agente nunca corta la red ni carga programas ¦ The agent never cuts the network or loads programs
+La restauración la hace Ingeniería con la herramienta del fabricante ¦ Engineering restores using the vendor tool
+La notificación a la autoridad la firma una persona ¦ A person signs the notification to the authority
+Energía, producción y turnos ¦ Energy, production and shifts
+Corte o pico de precio: energía, frío, producción y turnos ¦ Power cut or price spike: energy, cold, production and shifts
+Cada día, y siempre que la distribuidora anuncie un corte o el precio de la electricidad vaya a superar 180 €/MWh, cruza la previsión de energía con el plan de producción, el estado de las cámaras y la salud de las máquinas. Calcula cuánto se puede preenfriar para aguantar sin pasar de −18 °C, qué líneas conviene adelantar o retrasar y qué turnos habría que cambiar en el sistema de personal. Comprueba en el sistema de transporte que los camiones frigoríficos pueden seguir el nuevo plan y estima el ahorro y el CO₂. Pide aprobación a la jefatura de planta para cambiar las consignas de frío dentro de límites y a Recursos Humanos para los turnos. Aplica el plan, vigila las temperaturas cada minuto, deshazlo si alguna cámara se acerca al límite y deja el resultado en el informe de sostenibilidad. ¦ Every day, and whenever the utility announces a power cut or the electricity price is set to exceed €180/MWh, cross the energy forecast with the production plan, the state of the cold stores and machine health. Work out how much can be pre-cooled to ride it out without rising above −18 °C, which lines to bring forward or delay and which shifts would need changing in the HR system. Check in the transport system that refrigerated trucks can follow the new plan and estimate the savings and CO₂. Ask the plant manager for approval to change refrigeration setpoints within limits, and Human Resources for the shifts. Apply the plan, watch temperatures every minute, undo it if any cold store nears the limit and record the result in the sustainability report.
+Corte o precio alto ¦ Power cut or high price
+Más de 180 €/MWh ¦ Over €180/MWh
+Pico previsto mañana de 18:00 a 21:00 ¦ Peak expected tomorrow 18:00 to 21:00
+Previsión de frío ¦ Cold forecast
+Cámaras y consumo ¦ Cold stores and demand
+Las cámaras aguantan 3 h con preenfriado ¦ Cold stores hold 3 h with pre-cooling
+Preenfriado posible ¦ Possible pre-cooling
+Sin pasar de −18 °C ¦ Never above −18 °C
+Bajar a −24 °C entre 14:00 y 18:00 ¦ Pull down to −24 °C between 14:00 and 18:00
+Reordenar líneas ¦ Resequence lines
+Adelantar o retrasar ¦ Bring forward or delay
+2 líneas adelantan 4 horas ¦ 2 lines move 4 hours earlier
+Salud de máquinas ¦ Machine health
+Evitar equipos en riesgo ¦ Avoid at-risk equipment
+Se excluye un compresor en vigilancia ¦ A compressor under watch is excluded
+Cambios de turno ¦ Shift changes
+Personas necesarias ¦ People needed
+6 personas cambian de turno ¦ 6 people change shift
+Transporte frigorífico ¦ Refrigerated transport
+Nuevo horario ¦ New schedule
+3 camiones reprogramables ¦ 3 trucks can be rescheduled
+Ahorro y CO₂ ¦ Savings and CO₂
+Estimación ¦ Estimate
+Ahorro estimado: 4.200 € y 6 t de CO₂ ¦ Estimated saving: €4,200 and 6 t of CO₂
+Consignas de frío ¦ Refrigeration setpoints
+Recursos Humanos ¦ Human Resources
+Turnos ¦ Shifts
+Aplicar el plan ¦ Apply the plan
+Plan preparado para aplicar ¦ Plan ready to apply
+¿Cámara cerca del límite? ¦ Cold store near limit?
+Cada minuto ¦ Every minute
+Ninguna en la simulación ¦ None in the simulation
+Deshacer el cambio ¦ Undo the change
+Vuelta a consignas ¦ Back to setpoints
+Informe de sostenibilidad ¦ Sustainability report
+Ahorro y emisiones ¦ Savings and emissions
+Dato registrado ¦ Data recorded
+Anticipar el corte o el precio ¦ Anticipate the cut or price
+Planificar el frío ¦ Plan the cold
+Reordenar producción, turnos y transporte ¦ Resequence production, shifts and transport
+Estimar el beneficio ¦ Estimate the benefit
+Dos aprobaciones distintas ¦ Two separate approvals
+Aplicar, vigilar y deshacer ¦ Apply, watch and undo
+Dejar constancia ¦ Keep a record
+Ninguna cámara puede superar −18 °C ¦ No cold store may rise above −18 °C
+Los cambios de turno requieren Recursos Humanos ¦ Shift changes require Human Resources
+Cualquier cambio se puede deshacer en un clic ¦ Any change can be undone in one click
+Alta de una planta nueva ¦ Onboarding a new plant
+Alta de una planta adquirida: de los PLC a la dirección ¦ Onboarding an acquired plant: from PLCs to management
+Plantas que se incorporan ¦ Plants joining the group
+Cuando se incorpore una planta nueva, descubre en modo lectura todos los PLC, variadores y redes, y crea cada activo en SAP PM con su jerarquía de planta, línea y máquina. Haz copia de todos los programas, compara el firmware con los avisos de seguridad y marca lo que esté fuera de soporte. Propón el nombre común de cada variable usando las plantas ya conectadas como referencia y envía a Ingeniería solo las dudosas. Importa manuales y esquemas al gestor documental, copia los planes de mantenimiento de las máquinas gemelas y comprueba qué repuestos críticos faltan para pedirlos en SAP MM. Aprende con cuatro semanas de datos antes de enviar ningún aviso y presenta cada viernes a la dirección el avance, los riesgos y la inversión necesaria. ¦ When a new plant joins, discover all PLCs, drives and networks in read-only mode, and create each asset in SAP PM with its plant, line and machine hierarchy. Back up every program, compare firmware against security advisories and flag whatever is out of support. Propose the standard name for each signal using the plants already connected as reference, and send Engineering only the doubtful ones. Import manuals and drawings into document management, copy the maintenance plans of twin machines and check which critical spare parts are missing so they can be ordered in SAP MM. Learn from four weeks of data before sending any alert, and present progress, risks and required investment to management every Friday.
+Planta incorporada ¦ Plant joined
+Alta en el registro ¦ Added to the registry
+Descubrir PLC y redes ¦ Discover PLCs and networks
+117 autómatas esperados · 71 vistos ¦ 117 PLCs expected · 71 found
+Crear activos ¦ Create assets
+Planta, línea, máquina ¦ Plant, line, machine
+Jerarquía propuesta para 109 máquinas ¦ Hierarchy proposed for 109 machines
+Copiar programas ¦ Back up programs
+Todos los PLC ¦ All PLCs
+Nombrar variables ¦ Name signals
+Según otras plantas ¦ Based on other plants
+81 % con confianza alta ¦ 81% with high confidence
+Manuales y esquemas ¦ Manuals and drawings
+Importar ¦ Import
+Faltan esquemas del área de hornos ¦ Oven area drawings missing
+Planes de gemelas ¦ Twin plans
+Planes copiados para 74 máquinas ¦ Plans copied for 74 machines
+Firmware y soporte ¦ Firmware and support
+Avisos de seguridad ¦ Security advisories
+6 autómatas fuera de soporte ¦ 6 PLCs out of support
+Ingeniería ¦ Engineering
+Variables dudosas ¦ Doubtful signals
+Repuestos críticos ¦ Critical spares
+Pedir lo que falta ¦ Order what is missing
+12 referencias sin stock ¦ 12 items out of stock
+Aprender 4 semanas ¦ Learn for 4 weeks
+Sin avisos ¦ No alerts
+Periodo de aprendizaje programado ¦ Learning period scheduled
+Informe de los viernes ¦ Friday report
+Avance, riesgo e inversión ¦ Progress, risk and investment
+Primer informe preparado ¦ First report ready
+Descubrir sin tocar nada ¦ Discover without touching anything
+Dar de alta los activos ¦ Register the assets
+Asegurar programas y firmware ¦ Secure programs and firmware
+Unificar nombres con revisión humana ¦ Unify names with human review
+Preparar mantenimiento y repuestos ¦ Prepare maintenance and spares
+Aprender antes de avisar e informar ¦ Learn before alerting, and report
+Descubrimiento solo en lectura y en ventana autorizada ¦ Read-only discovery, inside an authorised window
+Los pedidos se proponen; Compras los aprueba ¦ Orders are proposed; Purchasing approves them
+Ningún aviso automático durante el aprendizaje ¦ No automatic alerts during learning
+sin efectos reales ¦ no real effects
+Corte o pico de precio: energía, frío, producción y turnos · 13 plantas ¦ Power cut or price spike: energy, cold, production and shifts · 13 plants
+Alcance: 13 plantas ¦ Scope: 13 plants
 Rosquillas ¦ Doughnuts
 Trenzas ¦ Braids
 Cambiar de industria ¦ Switch industry

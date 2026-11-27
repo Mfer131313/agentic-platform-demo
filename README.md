@@ -92,3 +92,10 @@ Problemas habituales al arrancar Prodigy:
   (y en LiteLLM), no el alias de la clave.
 
 Desde el enlace publicado en claude.ai el modo Prodigy no funciona: la página no puede llamar a otros servidores.
+
+## Gestión global de plantas (Hornalba)
+
+`hornalba.html` es una consola con pantallas propias para una empresa ficticia de masas congeladas: red de plantas,
+registro de máquinas y PLC, decisiones de mantenimiento, reclamación de cliente, simulacro de caída de una planta y
+capa de agentes. Reutiliza el núcleo (`assets/js/core.js`) y vive en `assets/hornalba/`. Español e inglés.
+

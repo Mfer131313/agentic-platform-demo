@@ -14,7 +14,8 @@
   const VERSION = '2.1';
   const I18N = window.CN_I18N;
   const t = (s) => I18N ? I18N.text(s) : s;
-  const DEMO_EPOCH = Date.UTC(2026, 8, 29, 7, 5, 0); // martes 29/09/2026 07:05, hora de planta
+  // martes 29/09/2026 07:05, hora de planta; un paquete puede fijar la suya con meta.epoch ('AAAA-MM-DDTHH:MM:SS')
+  const DEMO_EPOCH = META.epoch ? Date.parse(META.epoch + 'Z') : Date.UTC(2026, 8, 29, 7, 5, 0);
   const STALE_MS = 4 * 3600 * 1000;
   const DEFAULT_ACTOR = META.user_role || 'Responsable de turno';
   const MINUS = '\u2212';
@@ -1273,6 +1274,11 @@
   /* ================================================================ Modal, confirmación, avisos */
 
   let modalApi = null;
+  /* Saca la caja de avisos del diálogo antes de vaciarlo, para que innerHTML no la borre. */
+  function rescueToasts(dlg) {
+    const box = document.getElementById('toasts');
+    if (box && dlg.contains(box)) document.body.appendChild(box);
+  }
   function toastHost() {
     const box = document.getElementById('toasts');
     const dlg = document.getElementById('modal');
@@ -1292,6 +1298,7 @@
     if (modalApi) modalApi.close('replaced');
     const actions = o.actions || [{ label: 'Cerrar', variant: 'primary' }];
     dlg.className = 'modal modal-' + (o.size || 'md');
+    rescueToasts(dlg);
     dlg.innerHTML = String(html`<div class="modal-card">
       <header class="modal-head"><div class="modal-titles">${o.kicker ? html`<div class="modal-kicker">${o.kicker}</div>` : ''}<h2 class="modal-title" id="modal-title">${o.title || ''}</h2></div><button type="button" class="icon-btn" data-modal-close aria-label="Cerrar">${icon('x')}</button></header>
       <div class="modal-body"></div>
@@ -1310,6 +1317,7 @@
         dlg.removeEventListener('cancel', onCancel);
         if (result !== 'replaced') {
           if (dlg.open) dlg.close();
+          rescueToasts(dlg);
           dlg.innerHTML = '';
         }
         if (modalApi === api) modalApi = null;
@@ -1684,10 +1692,10 @@ ${signs ? `<div class="sign">${signs}</div>` : ''}
       size: 'md',
       body: html`<div class="stack" style="gap:14px">${sections.map(([h, t]) => html`<div><div class="h3" style="font-size:14px">${h}</div><p class="slate mt-1">${t}</p></div>`)}<p class="muted small">Versión ${VERSION} · ${fmt.date(META.today || '2026-09-29')} · preparado por MFM</p></div>`,
       actions: [
-        { label: 'Cambiar de industria', icon: 'layers', variant: 'ghost', left: true, close: false, onClick: () => { window.location.href = 'index.html'; return false; } },
+        META.standalone ? null : { label: 'Cambiar de industria', icon: 'layers', variant: 'ghost', left: true, close: false, onClick: () => { window.location.href = 'index.html'; return false; } },
         { label: 'Registro de auditoría', icon: 'history', variant: 'secondary', onClick: () => { setTimeout(openAuditLog, 0); } },
         { label: 'Cerrar', variant: 'primary', autofocus: true }
-      ]
+      ].filter(Boolean)
     });
   }
 
@@ -1934,7 +1942,9 @@ ${signs ? `<div class="sign">${signs}</div>` : ''}
     if (o.confirm !== false) {
       const ok = await confirm({
         title: 'Reiniciar demo',
-        body: html`<p class="slate">Se borran los workflows publicados, las decisiones, los tickets y el registro de auditoría de esta sesión de ${META.company}. Los datos vuelven a las 07:05 del martes 29/09/2026.</p>`,
+        body: META.epoch
+          ? html`<p class="slate">Se borran los workflows publicados, las decisiones, los tickets y el registro de auditoría de esta sesión de ${META.company}. Los datos vuelven a las ${fmt.time(new Date(DEMO_EPOCH))} del ${fmt.weekday(new Date(DEMO_EPOCH))} ${fmt.date(new Date(DEMO_EPOCH))}.</p>`
+          : html`<p class="slate">Se borran los workflows publicados, las decisiones, los tickets y el registro de auditoría de esta sesión de ${META.company}. Los datos vuelven a las 07:05 del martes 29/09/2026.</p>`,
         confirmLabel: 'Reiniciar demo',
         icon: 'rotate-ccw'
       });
@@ -1951,7 +1961,7 @@ ${signs ? `<div class="sign">${signs}</div>` : ''}
       if (parseHash().id === first.id && !parseHash().params.length) navigate(true); else location.hash = first.id;
     }
     updateChrome();
-    toast('Demo reiniciada · martes 29/09/2026 07:05', { tone: 'ok', icon: 'rotate-ccw' });
+    toast(META.epoch ? `Demo reiniciada · ${fmt.weekday(new Date(DEMO_EPOCH))} ${fmt.date(new Date(DEMO_EPOCH))} ${fmt.time(new Date(DEMO_EPOCH))}` : 'Demo reiniciada · martes 29/09/2026 07:05', { tone: 'ok', icon: 'rotate-ccw' });
     return true;
   }
 

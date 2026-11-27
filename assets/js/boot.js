@@ -63,7 +63,10 @@
         return `<a class="ws-opt${cur ? ' is-current' : ''}" role="listitem" href="consola.html?ind=${k}"${cur ? ' aria-current="true"' : ''}>`
           + `<span class="ws-avatar" style="background:${m.theme.brand}">${m.short}</span>`
           + `<span class="ws-text"><span class="ws-name">${m.industry}</span><span class="ws-sub">${m.company}</span></span></a>`;
-      }).join('') + `<a class="ws-opt ws-all" role="listitem" href="index.html"><span class="ws-text"><span class="ws-sub">${EN ? 'See all industries' : 'Ver todas las industrias'}</span></span></a>`;
+      }).join('')
+        /* Consolas con página propia (fuera de consola.html) */
+        + `<a class="ws-opt" role="listitem" href="hornalba.html"><span class="ws-avatar" style="background:#8A4B2A">HB</span><span class="ws-text"><span class="ws-name">${EN ? 'Frozen dough and global plants' : 'Masas congeladas y plantas globales'}</span><span class="ws-sub">Hornalba</span></span></a>`
+        + `<a class="ws-opt ws-all" role="listitem" href="index.html"><span class="ws-text"><span class="ws-sub">${EN ? 'See all industries' : 'Ver todas las industrias'}</span></span></a>`;
     }
     document.addEventListener('click', (e) => {
       const sw = document.getElementById('ws-switch');

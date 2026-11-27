@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Agentic Platform por industria</title>
-  <meta name="description" content="Siete consolas de Agentic Platform con la misma estructura y los mismos casos con agentes que la demo de Congelados de Navarra: maquinaria industrial, banca, retail, cervecera, despacho de abogados, empresa de congelados y concesionario de automóviles. Datos sintéticos preparados por MFM.">
+  <meta name="description" content="Once consolas de Agentic Platform por industria con casos resueltos por agentes, desde maquinaria industrial y banca hasta una red global de plantas con datos de PLC. Datos sintéticos preparados por MFM.">
   <meta name="theme-color" content="#344E45">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Crect width='26' height='26' rx='6' fill='%23344E45'/%3E%3Cpath d='M8.5 8.5 17.5 13 8.5 17.5' fill='none' stroke='%23EEF3F1' stroke-width='1.6'/%3E%3Ccircle cx='8.5' cy='8.5' r='2.6' fill='%23EEF3F1'/%3E%3Ccircle cx='17.5' cy='13' r='2.6' fill='%23EEF3F1'/%3E%3Ccircle cx='8.5' cy='17.5' r='2.6' fill='%23EEF3F1'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -66,6 +66,7 @@
   <script src="assets/js/industries/alarmas/meta.js"></script>
   <script src="assets/js/industries/norel/meta.js"></script>
   <script src="assets/js/industries/fruta/meta.js"></script>
+  <script src="assets/js/industries/hornalba/meta.js"></script>
   <script src="assets/js/industries/maquinaria/en/meta.js"></script>
   <script src="assets/js/industries/banca/en/meta.js"></script>
   <script src="assets/js/industries/retail/en/meta.js"></script>
@@ -76,6 +77,7 @@
   <script src="assets/js/industries/alarmas/en/meta.js"></script>
   <script src="assets/js/industries/norel/en/meta.js"></script>
   <script src="assets/js/industries/fruta/en/meta.js"></script>
+  <script src="assets/js/industries/hornalba/en/meta.js"></script>
 </head>
 <body>
   <header class="top">
@@ -88,8 +90,8 @@
   <main class="wrap">
     <section class="hero">
       <div class="kicker" data-t="kicker">Demostración por industria</div>
-      <h1 data-t="h1">La misma consola y los mismos casos con agentes, en diez sectores</h1>
-      <p class="lead" data-t="lead">Cada consola repite las ocho escenas de la demo de Congelados de Navarra con los sistemas, la normativa y los casos de su sector. Las empresas y los datos son ficticios, y todo se ejecuta en el navegador sin tocar sistemas reales.</p>
+      <h1 data-t="h1">La misma plataforma de agentes, en once sectores</h1>
+      <p class="lead" data-t="lead">Diez consolas repiten las ocho escenas de la demo de Congelados de Navarra con los sistemas, la normativa y los casos de su sector. La de gestión global de plantas tiene pantallas propias: máquinas y PLC, mantenimiento y continuidad. Los escenarios y los datos son de demostración, y todo se ejecuta en el navegador sin tocar sistemas reales.</p>
       <ul class="scenes" id="scenes" aria-label="Escenas de cada consola">
         <li>Resumen del turno</li><li>De palabras a workflow</li><li>Alarma con aprobación humana</li><li>Reclamación de cliente</li><li>Simulacro de trazabilidad</li><li>Cuestionario de cliente</li><li>Procedimientos con citas</li><li>Cómo encaja Agentic Platform</li>
       </ul>
@@ -160,6 +162,12 @@
           ['Reclamación', 'Aguacate ready to eat con un 35 % de piezas duras en 4 tiendas de una cadena (CLM-2026-1120)'],
           ['Simulacro', 'Retirada del lote de mango MG-2611-KE-031 por residuo de plaguicida: 11 clientes y 640 pedidos online'],
           ['Cuestionario', 'Auditoría de proveedor de una cadena alemana (GLOBALG.A.P., GRASP, IFS Food)']
+        ],
+        hornalba: [
+          ['Alarma', 'Vibración en el congelador espiral de la línea 3 de Valdecierzo: diagnóstico y aprobación'],
+          ['Reclamación', 'Croissants pegados con hielo: los datos del PLC del día de fabricación explican la causa'],
+          ['Simulacro', 'Caída de una planta entera: qué otras pueden fabricar y qué queda sin cubrir'],
+          ['Red de PLC', 'Un agente revisa 29 máquinas de 13 plantas, con registro de autómatas y copias']
         ]
       };
       var CASES_EN = {
@@ -222,13 +230,19 @@
           ['Complaint', 'Ready-to-eat avocado with 35 % hard fruit in 4 stores of a retail chain (CLM-2026-1120)'],
           ['Drill', 'Withdrawal of mango lot MG-2611-KE-031 for a pesticide residue: 11 customers and 640 online orders'],
           ['Questionnaire', 'Supplier audit from a German retail chain (GLOBALG.A.P., GRASP, IFS Food)']
+        ],
+        hornalba: [
+          ['Alarm', 'Vibration on the Valdecierzo line 3 spiral freezer: diagnosis and approval'],
+          ['Complaint', 'Croissants stuck together with ice: PLC data from the production day explains why'],
+          ['Drill', 'A whole plant goes down: which others can produce and what stays uncovered'],
+          ['PLC network', 'An agent reviews 29 machines in 13 plants, with a PLC and backup registry']
         ]
       };
       var T = {
         es: { scenes: ['Resumen del turno', 'De palabras a workflow', 'Alarma con aprobación humana', 'Reclamación de cliente', 'Simulacro de trazabilidad', 'Cuestionario de cliente', 'Procedimientos con citas', 'Cómo encaja Agentic Platform'], conn: 'Conectores', open: 'Abrir la consola de ' },
         en: { scenes: ['Shift summary', 'From words to workflow', 'Alarm with human approval', 'Customer complaint', 'Traceability drill', 'Customer questionnaire', 'Procedures with citations', 'How Agentic Platform fits'], conn: 'Connectors', open: 'Open the console for ',
-          sub: 'MFM agent platform', kicker: 'Demo by industry', h1: 'The same console and the same agent use cases, in ten sectors',
-          lead: 'Each console repeats the eight scenes of the Congelados de Navarra demo with the systems, regulations and cases of its sector. Companies and data are fictitious, and everything runs in the browser without touching real systems.',
+          sub: 'MFM agent platform', kicker: 'Demo by industry', h1: 'One agent platform, eleven sectors',
+          lead: 'Ten consoles repeat the eight scenes of the Congelados de Navarra demo with the systems, regulations and cases of their sector. The global plant management one has its own screens: machines and PLCs, maintenance and continuity. Scenarios and data are for demonstration, and everything runs in the browser without touching real systems.',
           ref: 'Reference demo: Congelados de Navarra, frozen food.', refa: 'Open the original demo ↗',
           foot: 'Synthetic demo data prepared by MFM. Actions (holds, notices, publications) are simulated and stay in this browser only.' }
       };
@@ -246,7 +260,7 @@
         b.setAttribute('aria-pressed', String(b.getAttribute('data-lang') === LANG));
         b.addEventListener('click', function () { try { localStorage.setItem('agentic-ind-lang', b.getAttribute('data-lang')); } catch (e) { /* */ } location.search = '?lang=' + b.getAttribute('data-lang'); });
       });
-      var ORDER = ['maquinaria', 'banca', 'retail', 'cerveceria', 'abogados', 'congelados', 'autopista', 'alarmas', 'norel', 'fruta'];
+      var ORDER = ['maquinaria', 'banca', 'retail', 'cerveceria', 'abogados', 'congelados', 'autopista', 'alarmas', 'norel', 'fruta', 'hornalba'];
       var P = window.AGENTIC_INDUSTRIES || {};
       var PE = window.AGENTIC_INDUSTRIES_EN || {};
       var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
@@ -257,7 +271,7 @@
           + '<div class="ind-head"><span class="ind-av">' + esc(m.short) + '</span><div><div class="ind-name">' + esc(m.industry) + '</div><div class="ind-co">' + esc(m.company) + ' · ' + esc(m.site) + '</div></div></div>'
           + '<div class="ind-body"><ul class="cases">' + CASES[k].map(function (c) { return '<li><b>' + esc(c[0]) + '</b><span>' + esc(c[1]) + '</span></li>'; }).join('') + '</ul>'
           + '<div class="systems">' + T[LANG].conn + ': ' + esc(m.connectors.join(', ')) + '</div>'
-          + '<a class="go" href="consola.html?ind=' + k + '&lang=' + LANG + '">' + T[LANG].open + esc(EN ? m.industry : m.industry.toLowerCase()) + ' →</a></div></article>';
+          + '<a class="go" href="' + (m.href ? m.href + '?lang=' : 'consola.html?ind=' + k + '&lang=') + LANG + '">' + T[LANG].open + esc(EN ? m.industry : m.industry.toLowerCase()) + ' →</a></div></article>';
       }).join('');
     })();
   </script>
